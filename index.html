@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATMAN — Your Money Safe, Forever</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: auto; }
+        body { font-family: 'Inter', sans-serif; color: #e2e0ec; background: #0a0a12; min-height: 100vh; overflow-x: hidden; }
+
+        .snap-section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+
+        .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.25; pointer-events: none; z-index: 0; }
+        .blob-1 { width: 600px; height: 600px; background: #d4a017; top: -200px; left: -150px; }
+        .blob-2 { width: 450px; height: 450px; background: #14b8a6; top: 300px; right: -120px; }
+        .blob-3 { width: 400px; height: 400px; background: #7c3aed; bottom: -100px; left: 25%; }
+
+        /* ── Navbar ── */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; transition: background 0.3s, box-shadow 0.3s; }
+        .navbar.scrolled { background: rgba(10, 10, 18, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3); }
+        .navbar-logo { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 22px; color: #f5f0e6; text-decoration: none; letter-spacing: 4px; }
+        .navbar-right { display: flex; align-items: center; gap: 24px; }
+        .navbar-links { display: flex; gap: 28px; list-style: none; }
+        .navbar-links a { font-size: 14px; font-weight: 500; color: #9a96a8; text-decoration: none; transition: color 0.2s; }
+        .navbar-links a:hover { color: #d4a017; }
+
+        /* ── Lang selector ── */
+        .lang-selector { position: relative; }
+        .lang-btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 12px; color: #e2e0ec; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+        .lang-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(212,160,23,0.3); }
+        .lang-btn .flag { font-size: 16px; line-height: 1; }
+        .lang-btn .arrow { font-size: 10px; transition: transform 0.2s; }
+        .lang-selector.open .lang-btn .arrow { transform: rotate(180deg); }
+        .lang-dropdown { position: absolute; top: calc(100% + 6px); right: 0; background: #16161f; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all 0.2s; min-width: 160px; z-index: 200; }
+        .lang-selector.open .lang-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+        .lang-option { display: flex; align-items: center; gap: 10px; padding: 10px 16px; cursor: pointer; font-size: 13px; color: #b0adc0; transition: background 0.15s, color 0.15s; }
+        .lang-option:hover { background: rgba(212,160,23,0.1); color: #f5f0e6; }
+        .lang-option.active { color: #d4a017; background: rgba(212,160,23,0.08); }
+        .lang-option .flag { font-size: 18px; }
+        .lang-option .lang-name { flex: 1; }
+        .lang-option .lang-check { font-size: 14px; opacity: 0; }
+        .lang-option.active .lang-check { opacity: 1; }
+
+        /* ── Hero ── */
+        .hero { position: relative; align-items: center; text-align: center; padding: 120px 24px 60px; }
+        .hero-content { position: relative; z-index: 1; max-width: 780px; }
+        .hero-tag { display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #d4a017; margin-bottom: 24px; padding: 8px 20px; border: 1px solid rgba(212, 160, 23, 0.3); border-radius: 999px; background: rgba(212, 160, 23, 0.08); }
+        .hero-title { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: clamp(48px, 9vw, 88px); letter-spacing: -2px; line-height: 1; margin-bottom: 20px; background: linear-gradient(135deg, #f5f0e6 0%, #d4a017 50%, #14b8a6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-subtitle { font-size: clamp(16px, 2.5vw, 20px); color: #9a96a8; line-height: 1.7; margin-bottom: 40px; max-width: 580px; margin-left: auto; margin-right: auto; }
+        .btn-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn-download { display: inline-flex; align-items: center; gap: 10px; padding: 16px 36px; border-radius: 999px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; border: none; }
+        .btn-primary { background: linear-gradient(135deg, #d4a017, #b8860b); color: #0a0a12; box-shadow: 0 4px 24px rgba(212, 160, 23, 0.35); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(212, 160, 23, 0.5); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.06); color: #e2e0ec; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-secondary:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.1); }
+
+        /* ── Stats bar ── */
+        .stats-bar { position: relative; z-index: 1; display: flex; justify-content: center; gap: 48px; padding: 48px 24px; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 36px; color: #d4a017; line-height: 1; }
+        .stat-label { font-size: 13px; color: #6b6880; margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* ── Mockup ── */
+        .mockup-section { position: relative; z-index: 1; padding: 0 24px 80px; align-items: center; }
+        .mockup-wrapper { position: relative; width: 100%; max-width: 860px; }
+        .browser-frame { background: #111119; border-radius: 16px; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5); overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.06); }
+        .browser-bar { display: flex; align-items: center; gap: 8px; padding: 14px 18px; background: rgba(255, 255, 255, 0.04); }
+        .browser-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .browser-dot:nth-child(1) { background: #ff5f57; }
+        .browser-dot:nth-child(2) { background: #febc2e; }
+        .browser-dot:nth-child(3) { background: #28c840; }
+        .browser-content { aspect-ratio: 16 / 9; background: linear-gradient(135deg, #0a0a12 0%, #1a1530 50%, #0a0a12 100%); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .browser-content::before { content: ''; position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(212, 160, 23, 0.15) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .browser-app-title { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 48px; color: rgba(255, 255, 255, 0.08); letter-spacing: 12px; z-index: 1; }
+        .float-card { position: absolute; background: rgba(17, 17, 25, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(212, 160, 23, 0.2); border-radius: 14px; padding: 16px 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); z-index: 2; display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+        .float-card .card-icon { font-size: 22px; line-height: 1; }
+        .float-card .card-label { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 14px; color: #e2e0ec; }
+        .float-card-1 { top: 10%; left: -40px; animation: float-1 6s ease-in-out infinite; }
+        .float-card-2 { top: 15%; right: -50px; animation: float-2 7s ease-in-out infinite; }
+        .float-card-3 { bottom: 20%; left: -30px; animation: float-3 5.5s ease-in-out infinite; }
+        .float-card-4 { bottom: 10%; right: -40px; animation: float-4 6.5s ease-in-out infinite; }
+        @keyframes float-1 { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-14px) rotate(0deg); } }
+        @keyframes float-2 { 0%, 100% { transform: translateY(0) rotate(2deg); } 50% { transform: translateY(-12px) rotate(0deg); } }
+        @keyframes float-3 { 0%, 100% { transform: translateY(0) rotate(1deg); } 50% { transform: translateY(-16px) rotate(-1deg); } }
+        @keyframes float-4 { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-10px) rotate(1deg); } }
+
+        /* ── Section shared ── */
+        .section-heading { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: clamp(28px, 4vw, 40px); text-align: center; margin-bottom: 16px; color: #f5f0e6; }
+        .section-sub { text-align: center; color: #7a7690; font-size: 16px; line-height: 1.6; max-width: 600px; margin: 0 auto 56px; }
+
+        /* ── About ── */
+        .about { position: relative; z-index: 1; padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+        .about-text h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 24px; margin-bottom: 16px; color: #f5f0e6; }
+        .about-text .accent { color: #d4a017; }
+        .about-text p { color: #8a87a0; line-height: 1.7; margin-bottom: 16px; font-size: 15px; }
+        .about-text ul { list-style: none; padding: 0; }
+        .about-text ul li { padding: 8px 0; font-size: 15px; color: #b0adc0; display: flex; align-items: center; gap: 10px; }
+        .about-text ul li::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #d4a017; flex-shrink: 0; }
+        .about-visual { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 20px; padding: 40px; display: flex; flex-direction: column; gap: 16px; }
+        .about-stat { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: rgba(255, 255, 255, 0.04); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.04); }
+        .about-stat .stat-label { font-size: 14px; color: #7a7690; text-transform: none; letter-spacing: 0; margin-top: 0; }
+        .about-stat .stat-value { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 20px; color: #d4a017; }
+
+        /* ── Features ── */
+        .features { position: relative; z-index: 1; padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .feature-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 18px; padding: 36px 28px; text-align: center; transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s; opacity: 0; transform: translateY(24px); }
+        .feature-card.visible { opacity: 1; transform: translateY(0); transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.25s, border-color 0.25s; }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3); border-color: rgba(212, 160, 23, 0.2); }
+        .feature-icon { font-size: 40px; margin-bottom: 18px; line-height: 1; }
+        .feature-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 10px; color: #f5f0e6; }
+        .feature-desc { font-size: 14px; color: #7a7690; line-height: 1.6; }
+
+        /* ── Steps ── */
+        .how-it-works { position: relative; z-index: 1; padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+        .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        .step { text-align: center; padding: 40px 20px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 18px; opacity: 0; transform: translateY(24px); position: relative; }
+        .step.visible { opacity: 1; transform: translateY(0); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .step-number { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #d4a017, #b8860b); color: #0a0a12; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 20px; }
+        .step h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 17px; margin-bottom: 10px; color: #f5f0e6; }
+        .step p { font-size: 14px; color: #7a7690; line-height: 1.6; }
+
+        /* ── Pricing ── */
+        .pricing { position: relative; z-index: 1; padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+        .pricing-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 20px; padding: 40px 32px; text-align: center; transition: transform 0.25s, box-shadow 0.25s; opacity: 0; transform: translateY(24px); }
+        .pricing-card.visible { opacity: 1; transform: translateY(0); transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.25s; }
+        .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3); }
+        .pricing-card.featured { border: 2px solid #d4a017; position: relative; }
+        .pricing-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #d4a017, #b8860b); color: #0a0a12; font-size: 12px; font-weight: 700; padding: 5px 18px; border-radius: 999px; letter-spacing: 1px; }
+        .pricing-name { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 20px; margin-bottom: 8px; color: #f5f0e6; }
+        .pricing-price { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 48px; color: #d4a017; line-height: 1; margin-bottom: 4px; }
+        .pricing-price span { font-size: 16px; font-weight: 500; color: #6b6880; }
+        .pricing-desc { font-size: 14px; color: #7a7690; margin-bottom: 24px; }
+        .pricing-features { list-style: none; padding: 0; margin-bottom: 32px; text-align: left; }
+        .pricing-features li { padding: 8px 0; font-size: 14px; color: #b0adc0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .pricing-features li:last-child { border-bottom: none; }
+        .pricing-features li .check { color: #14b8a6; font-weight: 700; font-size: 16px; }
+        .btn-plan { display: inline-block; padding: 12px 28px; border-radius: 999px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; }
+        .btn-plan-primary { background: linear-gradient(135deg, #d4a017, #b8860b); color: #0a0a12; box-shadow: 0 4px 20px rgba(212, 160, 23, 0.35); }
+        .btn-plan-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(212, 160, 23, 0.5); }
+        .btn-plan-outline { background: transparent; color: #d4a017; border: 2px solid rgba(212, 160, 23, 0.4); }
+        .btn-plan-outline:hover { transform: translateY(-2px); background: rgba(212, 160, 23, 0.08); }
+
+        /* ── Comparison ── */
+        .comparison { position: relative; z-index: 1; padding: 100px 24px; max-width: 900px; margin: 0 auto; }
+        .comparison-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .comparison-table th { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 14px; padding: 16px 20px; text-align: left; border-bottom: 2px solid rgba(212, 160, 23, 0.3); color: #d4a017; }
+        .comparison-table td { padding: 14px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: #b0adc0; }
+        .comparison-table tr td:first-child { color: #f5f0e6; font-weight: 500; }
+        .comparison-table .yes { color: #14b8a6; font-weight: 600; }
+        .comparison-table .no { color: #6b6880; }
+
+        /* ── FAQ ── */
+        .faq { position: relative; z-index: 1; padding: 100px 24px; max-width: 760px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding: 20px 0; }
+        .faq-question { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; background: none; border: none; width: 100%; text-align: left; color: #f5f0e6; padding: 0; }
+        .faq-question::after { content: '+'; font-size: 22px; font-weight: 400; color: #d4a017; transition: transform 0.3s; flex-shrink: 0; }
+        .faq-item.open .faq-question::after { transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; }
+        .faq-item.open .faq-answer { max-height: 300px; padding-top: 12px; }
+        .faq-answer p { font-size: 14px; color: #7a7690; line-height: 1.7; }
+
+        /* ── CTA ── */
+        .cta { position: relative; z-index: 1; background: linear-gradient(135deg, #d4a017, #b8860b); padding: 80px 32px; text-align: center; align-items: center; }
+        .cta-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: clamp(28px, 4vw, 40px); color: #0a0a12; margin-bottom: 12px; }
+        .cta-sub { color: rgba(10, 10, 18, 0.7); font-size: 16px; margin-bottom: 36px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .cta .btn-primary { background: #0a0a12; color: #d4a017; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
+        .cta .btn-primary:hover { box-shadow: 0 6px 28px rgba(0, 0, 0, 0.35); }
+        .cta .btn-secondary { background: rgba(10, 10, 18, 0.15); color: #0a0a12; border: 2px solid rgba(10, 10, 18, 0.3); box-shadow: none; }
+        .cta .btn-secondary:hover { background: rgba(10, 10, 18, 0.25); }
+        .cta-quote { margin-top: 40px; font-style: italic; font-size: 15px; color: rgba(10, 10, 18, 0.6); max-width: 500px; margin-left: auto; margin-right: auto; }
+
+        /* ── Footer ── */
+        .footer { position: relative; z-index: 1; text-align: center; padding: 40px 24px 48px; background: #07070d; }
+        .footer-logo { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 20px; color: #f5f0e6; letter-spacing: 4px; margin-bottom: 12px; }
+        .footer-tagline { font-size: 13px; color: #4a4860; margin-bottom: 20px; }
+        .footer-links { display: flex; justify-content: center; gap: 24px; list-style: none; margin-bottom: 20px; flex-wrap: wrap; }
+        .footer-links a { font-size: 13px; color: #6b6880; text-decoration: none; transition: color 0.2s; }
+        .footer-links a:hover { color: #d4a017; }
+        .footer-copy { font-size: 12px; color: #3a3850; }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .steps { grid-template-columns: repeat(2, 1fr); }
+            .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+            .about-grid { grid-template-columns: 1fr; }
+            .navbar-links { display: none; }
+            .float-card { display: none; }
+        }
+        @media (max-width: 600px) {
+            .features-grid { grid-template-columns: 1fr; }
+            .steps { grid-template-columns: 1fr; }
+            .stats-bar { gap: 24px; }
+        }
+
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles"></canvas>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="navbar-logo">ATMAN</a>
+        <div class="navbar-right">
+            <ul class="navbar-links">
+                <li><a href="#problema" data-i18n="nav_problem">Problema</a></li>
+                <li><a href="#como-funciona" data-i18n="nav_how">Como funciona</a></li>
+                <li><a href="#beneficios" data-i18n="nav_benefits">Beneficios</a></li>
+                <li><a href="#planes" data-i18n="nav_plans">Planes</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="lang-selector" id="langSelector">
+                <button class="lang-btn" id="langBtn">
+                    <span class="flag" id="langFlag">&#127462;&#127479;</span>
+                    <span id="langCode">ES</span>
+                    <span class="arrow">&#9662;</span>
+                </button>
+                <div class="lang-dropdown" id="langDropdown">
+                    <div class="lang-option active" data-lang="es">
+                        <span class="flag">&#127462;&#127479;</span>
+                        <span class="lang-name">Espanol</span>
+                        <span class="lang-check">&#10003;</span>
+                    </div>
+                    <div class="lang-option" data-lang="en">
+                        <span class="flag">&#127482;&#127480;</span>
+                        <span class="lang-name">English</span>
+                        <span class="lang-check">&#10003;</span>
+                    </div>
+                    <div class="lang-option" data-lang="pt">
+                        <span class="flag">&#127463;&#127479;</span>
+                        <span class="lang-name">Portugues</span>
+                        <span class="lang-check">&#10003;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="snap-section hero" data-snap>
+        <div class="hero-content">
+            <span class="hero-tag" data-i18n="hero_tag">Herencia Digital Cripto</span>
+            <h1 class="hero-title">ATMAN</h1>
+            <p class="hero-subtitle" data-i18n="hero_sub">Protege tu legado digital. Una app que asegura el destino de tus cripto activos cuando ya no estes. Herencia segura y simple para tu mundo digital.</p>
+            <div class="btn-group">
+                <a href="#como-funciona" class="btn-download btn-primary">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    <span data-i18n="hero_cta1">Conoce mas</span>
+                </a>
+                <a href="#planes" class="btn-download btn-secondary">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <span data-i18n="hero_cta2">Ver Planes</span>
+                </a>
+            </div>
+        </div>
+        <div class="stats-bar">
+            <div class="stat-item"><div class="stat-value">$200B+</div><div class="stat-label" data-i18n="stat1">BTC perdidos para siempre</div></div>
+            <div class="stat-item"><div class="stat-value">20%</div><div class="stat-label" data-i18n="stat2">de BTC minados inaccesibles</div></div>
+            <div class="stat-item"><div class="stat-value">$10B</div><div class="stat-label" data-i18n="stat3">perdidos por ano sin herencia</div></div>
+            <div class="stat-item"><div class="stat-value">0</div><div class="stat-label" data-i18n="stat4">soluciones simples hoy</div></div>
+        </div>
+    </section>
+
+    <!-- Mockup -->
+    <section class="snap-section mockup-section" data-snap>
+        <div class="mockup-wrapper">
+            <div class="float-card float-card-1"><span class="card-icon">&#x1F512;</span><span class="card-label" data-i18n="float1">Encriptacion avanzada</span></div>
+            <div class="float-card float-card-2"><span class="card-icon">&#x26D3;</span><span class="card-label">Smart Contracts</span></div>
+            <div class="float-card float-card-3"><span class="card-icon">&#x1F4C8;</span><span class="card-label" data-i18n="float3">Staking automatico</span></div>
+            <div class="float-card float-card-4"><span class="card-icon">&#x1F91D;</span><span class="card-label" data-i18n="float4">Herederos elegidos</span></div>
+            <div class="browser-frame">
+                <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+                <div class="browser-content"><span class="browser-app-title">A T M A N</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem / Solution -->
+    <section class="about snap-section" id="problema" data-snap>
+        <h2 class="section-heading" data-i18n="about_title">El Problema & La Solucion</h2>
+        <p class="section-sub" data-i18n="about_sub">Miles de millones en criptomonedas se pierden cada ano porque sus duenos fallecen sin dejar instrucciones de acceso.</p>
+        <div class="about-grid">
+            <div class="about-text">
+                <h3 data-i18n="about_h3" data-i18n-html="true">El problema es <span class="accent">real</span></h3>
+                <p data-i18n="about_p1">Chainalysis estima que alrededor del 20% de todos los bitcoins minados estan perdidos para siempre. Mas de 3 millones de BTC, equivalentes a mas de $200 mil millones.</p>
+                <p data-i18n="about_p2">Cada ano se pierden entre $4.000 y $10.000 millones en criptomonedas debido a la muerte de sus propietarios sin planes de herencia.</p>
+                <ul>
+                    <li data-i18n="about_li1">Gerald Cotten (QuadrigaCX): $190M perdidos</li>
+                    <li data-i18n="about_li2">Stefan Thomas: 7.000 BTC inaccesibles (~$400M)</li>
+                    <li data-i18n="about_li3">Usuarios sin herramientas seguras para transmitir claves</li>
+                    <li data-i18n="about_li4">Problema creciente con la adopcion cripto masiva</li>
+                </ul>
+            </div>
+            <div class="about-visual">
+                <div class="about-stat"><span class="stat-label" data-i18n="astat1">BTC perdidos permanentemente</span><span class="stat-value">3M+</span></div>
+                <div class="about-stat"><span class="stat-label" data-i18n="astat2">Perdida anual por fallecimientos</span><span class="stat-value">$10B</span></div>
+                <div class="about-stat"><span class="stat-label" data-i18n="astat3">Usuarios cripto en LATAM</span><span class="stat-value">50M+</span></div>
+                <div class="about-stat"><span class="stat-label" data-i18n="astat4">Soluciones accesibles actuales</span><span class="stat-value">~0</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works snap-section" id="como-funciona" data-snap>
+        <h2 class="section-heading" data-i18n="how_title">Como Funciona ATMAN</h2>
+        <p class="section-sub" data-i18n="how_sub">Simple, seguro, sin intermediarios. Configura tu legado digital en minutos.</p>
+        <div class="steps">
+            <div class="step"><div class="step-number">1</div><h3 data-i18n="step1_h">Registra tus activos</h3><p data-i18n="step1_p">Carga tus wallets, claves privadas, seed phrases o instrucciones de acceso. Todo queda cifrado y fragmentado.</p></div>
+            <div class="step"><div class="step-number">2</div><h3 data-i18n="step2_h">Elige herederos</h3><p data-i18n="step2_p">Designa una o mas personas. Define que recibe cada uno, como se les notifica e instrucciones personalizadas.</p></div>
+            <div class="step"><div class="step-number">3</div><h3 data-i18n="step3_h">Configura condiciones</h3><p data-i18n="step3_p">Inactividad, verificacion manual de fallecimiento, o multifirma. Tu decides cuando se activa la transferencia.</p></div>
+            <div class="step"><div class="step-number">4</div><h3 data-i18n="step4_h">Liberacion automatica</h3><p data-i18n="step4_p">Smart contracts ejecutan la transferencia segura. Datos encriptados llegan a tus herederos por un canal verificable.</p></div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features snap-section" id="beneficios" data-snap>
+        <h2 class="section-heading" data-i18n="feat_title">Beneficios</h2>
+        <p class="section-sub" data-i18n="feat_sub">ATMAN no solo protege tu herencia digital, la hace crecer.</p>
+        <div class="features-grid">
+            <div class="feature-card"><div class="feature-icon">&#x1F510;</div><div class="feature-title" data-i18n="f1_t">Seguridad total</div><div class="feature-desc" data-i18n="f1_d">Encriptacion avanzada con Shamir Secret Sharing. Tus claves nunca se almacenan completas en un solo lugar.</div></div>
+            <div class="feature-card"><div class="feature-icon">&#x1F465;</div><div class="feature-title" data-i18n="f2_t">Herederos elegidos</div><div class="feature-desc" data-i18n="f2_d">Vos decidis quien recibe que. Incluso si tu heredero no sabe de cripto, ATMAN lo guia paso a paso.</div></div>
+            <div class="feature-card"><div class="feature-icon">&#x26D3;&#xFE0F;</div><div class="feature-title">Smart Contracts</div><div class="feature-desc" data-i18n="f3_d">Transparentes, auditables y automaticos. Sin intermediarios humanos ni burocracia.</div></div>
+            <div class="feature-card"><div class="feature-icon">&#x1F4C8;</div><div class="feature-title" data-i18n="f4_t">Staking automatico</div><div class="feature-desc" data-i18n="f4_d">Tus activos generan rendimientos pasivos mientras estan protegidos. Tu legado sigue produciendo valor.</div></div>
+            <div class="feature-card"><div class="feature-icon">&#x1F331;</div><div class="feature-title" data-i18n="f5_t">Herencia consciente</div><div class="feature-desc" data-i18n="f5_d">Sin abogados ni bancos. Liberacion progresiva, condiciones educativas y custodia temporal para menores.</div></div>
+            <div class="feature-card"><div class="feature-icon">&#x2728;</div><div class="feature-title" data-i18n="f6_t">Simple y humano</div><div class="feature-desc" data-i18n="f6_d">Interfaz pensada para usuarios comunes, no criptoexpertos. Poetica emocional y accesibilidad.</div></div>
+        </div>
+    </section>
+
+    <!-- Comparison -->
+    <section class="comparison snap-section" id="competencia" data-snap>
+        <h2 class="section-heading" data-i18n="comp_title">ATMAN vs Competencia</h2>
+        <p class="section-sub" data-i18n="comp_sub">Lo que nos diferencia de las soluciones existentes.</p>
+        <table class="comparison-table">
+            <thead><tr><th data-i18n="comp_th1">Caracteristica</th><th>Safe Haven / Inheriti</th><th>ATMAN</th></tr></thead>
+            <tbody>
+                <tr><td data-i18n="comp_r1">Herederos sin experiencia cripto</td><td class="no" data-i18n="comp_r1_no">No esta pensado</td><td class="yes" data-i18n="comp_r1_yes">Si, es central</td></tr>
+                <tr><td>Blockchain</td><td class="no" data-i18n="comp_r2_no">Solo VeChain</td><td class="yes">Multichain</td></tr>
+                <tr><td data-i18n="comp_r3">Staking automatico</td><td class="no">No</td><td class="yes" data-i18n="comp_yes">Si</td></tr>
+                <tr><td data-i18n="comp_r4">Enfoque emocional</td><td class="no" data-i18n="comp_r4_no">Tecnico y frio</td><td class="yes" data-i18n="comp_r4_yes">Poetico y accesible</td></tr>
+                <tr><td data-i18n="comp_r5">Experiencia de usuario</td><td class="no" data-i18n="comp_r5_no">Cripto-avanzados</td><td class="yes" data-i18n="comp_r5_yes">Usuarios comunes</td></tr>
+                <tr><td data-i18n="comp_r6">Integracion legal</td><td class="no" data-i18n="comp_r6_no">Parcial</td><td class="yes" data-i18n="comp_r6_yes">Servicios legales/notariales</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing snap-section" id="planes" data-snap>
+        <h2 class="section-heading" data-i18n="price_title">Planes</h2>
+        <p class="section-sub" data-i18n="price_sub">Protege tu legado digital con el plan que se ajuste a tus necesidades.</p>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-name" data-i18n="plan1_name">Basico</div>
+                <div class="pricing-price" data-i18n="plan1_price">Gratis</div>
+                <div class="pricing-desc" data-i18n="plan1_desc">Para empezar a proteger tu legado</div>
+                <ul class="pricing-features">
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan1_f1">1 wallet registrada</span></li>
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan1_f2">1 heredero</span></li>
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan1_f3">Encriptacion basica</span></li>
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan1_f4">Deteccion de inactividad</span></li>
+                </ul>
+                <a href="#" class="btn-plan btn-plan-outline" data-i18n="plan1_btn">Comenzar gratis</a>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-badge">POPULAR</div>
+                <div class="pricing-name">Premium</div>
+                <div class="pricing-price">$99 <span data-i18n="plan2_period">unico</span></div>
+                <div class="pricing-desc" data-i18n="plan2_desc">Proteccion completa para tu familia</div>
+                <ul class="pricing-features">
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan2_f1">Wallets ilimitadas</span></li>
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan2_f2">Multiples herederos</span></li>
+                    <li><span class="check">&#10003;</span> Shamir Secret Sharing</li>
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan2_f4">Staking automatico</span></li>
+                    <li><span class="check">&#10003;</span> Smart contracts</li>
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan2_f6">Verificacion multifirma</span></li>
+                </ul>
+                <a href="#" class="btn-plan btn-plan-primary" data-i18n="plan2_btn">Elegir Premium</a>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-name">Enterprise</div>
+                <div class="pricing-price">Custom</div>
+                <div class="pricing-desc" data-i18n="plan3_desc">Para exchanges, wallets y empresas</div>
+                <ul class="pricing-features">
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan3_f1">Todo de Premium</span></li>
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan3_f2">API dedicada</span></li>
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan3_f3">Integracion B2B</span></li>
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan3_f4">Soporte legal incluido</span></li>
+                    <li><span class="check">&#10003;</span> <span data-i18n="plan3_f5">SLA garantizado</span></li>
+                </ul>
+                <a href="#" class="btn-plan btn-plan-outline" data-i18n="plan3_btn">Contactar</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq snap-section" id="faq" data-snap>
+        <h2 class="section-heading" data-i18n="faq_title">Preguntas Frecuentes</h2>
+        <p class="section-sub" data-i18n="faq_sub">Todo lo que necesitas saber sobre ATMAN.</p>
+        <div class="faq-item"><button class="faq-question" data-i18n="faq1_q">Es realmente seguro guardar mis claves en ATMAN?</button><div class="faq-answer"><p data-i18n="faq1_a">Si. Utilizamos encriptacion de grado militar y Shamir Secret Sharing. Tus claves nunca se almacenan completas en un solo lugar. Se fragmentan y distribuyen para maxima seguridad.</p></div></div>
+        <div class="faq-item"><button class="faq-question" data-i18n="faq2_q">Que pasa si mi heredero no sabe nada de cripto?</button><div class="faq-answer"><p data-i18n="faq2_a">ATMAN ofrece multiples opciones: envio con guia paso a paso, wallet preconfigurada con custodio temporal, fideicomiso digital con liberacion progresiva, o delegacion a un adulto responsable.</p></div></div>
+        <div class="faq-item"><button class="faq-question" data-i18n="faq3_q">Como se detecta el fallecimiento?</button><div class="faq-answer"><p data-i18n="faq3_a">Puedes configurar deteccion por inactividad (ej. no accedes en 6 meses), verificacion manual por un contacto de confianza, o multifirma donde X personas confirman.</p></div></div>
+        <div class="faq-item"><button class="faq-question" data-i18n="faq4_q">Que es el staking automatico?</button><div class="faq-answer"><p data-i18n="faq4_a">Mientras tus activos estan protegidos en ATMAN, se conectan con protocolos como Lido, Rocket Pool o Aave para generar rendimientos pasivos. Tu legado sigue produciendo valor incluso cuando no estas.</p></div></div>
+        <div class="faq-item"><button class="faq-question" data-i18n="faq5_q">ATMAN funciona con cualquier blockchain?</button><div class="faq-answer"><p data-i18n="faq5_a">Si. ATMAN es multichain e independiente de blockchain. Puedes registrar wallets de Ethereum, Bitcoin, Solana, y cualquier otro protocolo.</p></div></div>
+        <div class="faq-item"><button class="faq-question" data-i18n="faq6_q">Es legal transferir cripto despues de un fallecimiento?</button><div class="faq-answer"><p data-i18n="faq6_a">ATMAN esta disenado para integrarse con servicios legales y notariales. Trabajamos en conformidad con leyes de proteccion de datos y planificamos soporte para distintas jurisdicciones.</p></div></div>
+    </section>
+
+    <!-- CTA -->
+    <section class="snap-section cta" data-snap>
+        <h2 class="cta-title" data-i18n="cta_title">Protege tu legado hoy</h2>
+        <p class="cta-sub" data-i18n="cta_sub">No dejes que tus cripto activos desaparezcan. Configura tu herencia digital en minutos.</p>
+        <div class="btn-group">
+            <a href="#" class="btn-download btn-primary"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span data-i18n="cta_btn1">Comenzar ahora</span></a>
+            <a href="#" class="btn-download btn-secondary" data-i18n="cta_btn2">Contactar equipo</a>
+        </div>
+        <p class="cta-quote" data-i18n="cta_quote">"Cuando el cuerpo se apaga, el alma sigue su camino. Tambien tus claves pueden hacerlo." &mdash; ATMAN</p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">ATMAN</div>
+        <p class="footer-tagline">Your Money Safe, Forever</p>
+        <ul class="footer-links">
+            <li><a href="#problema" data-i18n="nav_problem">Problema</a></li>
+            <li><a href="#como-funciona" data-i18n="nav_how">Como Funciona</a></li>
+            <li><a href="#beneficios" data-i18n="nav_benefits">Beneficios</a></li>
+            <li><a href="#planes" data-i18n="nav_plans">Planes</a></li>
+            <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <p class="footer-copy" data-i18n="footer_copy">&copy; 2026 ATMAN. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+    // ═══════════════════════════════════════
+    // i18n TRANSLATIONS
+    // ═══════════════════════════════════════
+    const T = {
+      es: {
+        nav_problem: "Problema", nav_how: "Como funciona", nav_benefits: "Beneficios", nav_plans: "Planes",
+        hero_tag: "Herencia Digital Cripto", hero_sub: "Protege tu legado digital. Una app que asegura el destino de tus cripto activos cuando ya no estes. Herencia segura y simple para tu mundo digital.",
+        hero_cta1: "Conoce mas", hero_cta2: "Ver Planes",
+        stat1: "BTC perdidos para siempre", stat2: "de BTC minados inaccesibles", stat3: "perdidos por ano sin herencia", stat4: "soluciones simples hoy",
+        float1: "Encriptacion avanzada", float3: "Staking automatico", float4: "Herederos elegidos",
+        about_title: "El Problema & La Solucion", about_sub: "Miles de millones en criptomonedas se pierden cada ano porque sus duenos fallecen sin dejar instrucciones de acceso.",
+        about_h3: 'El problema es <span class="accent">real</span>', about_p1: "Chainalysis estima que alrededor del 20% de todos los bitcoins minados estan perdidos para siempre. Mas de 3 millones de BTC, equivalentes a mas de $200 mil millones.",
+        about_p2: "Cada ano se pierden entre $4.000 y $10.000 millones en criptomonedas debido a la muerte de sus propietarios sin planes de herencia.",
+        about_li1: "Gerald Cotten (QuadrigaCX): $190M perdidos", about_li2: "Stefan Thomas: 7.000 BTC inaccesibles (~$400M)", about_li3: "Usuarios sin herramientas seguras para transmitir claves", about_li4: "Problema creciente con la adopcion cripto masiva",
+        astat1: "BTC perdidos permanentemente", astat2: "Perdida anual por fallecimientos", astat3: "Usuarios cripto en LATAM", astat4: "Soluciones accesibles actuales",
+        how_title: "Como Funciona ATMAN", how_sub: "Simple, seguro, sin intermediarios. Configura tu legado digital en minutos.",
+        step1_h: "Registra tus activos", step1_p: "Carga tus wallets, claves privadas, seed phrases o instrucciones de acceso. Todo queda cifrado y fragmentado.",
+        step2_h: "Elige herederos", step2_p: "Designa una o mas personas. Define que recibe cada uno, como se les notifica e instrucciones personalizadas.",
+        step3_h: "Configura condiciones", step3_p: "Inactividad, verificacion manual de fallecimiento, o multifirma. Tu decides cuando se activa la transferencia.",
+        step4_h: "Liberacion automatica", step4_p: "Smart contracts ejecutan la transferencia segura. Datos encriptados llegan a tus herederos por un canal verificable.",
+        feat_title: "Beneficios", feat_sub: "ATMAN no solo protege tu herencia digital, la hace crecer.",
+        f1_t: "Seguridad total", f1_d: "Encriptacion avanzada con Shamir Secret Sharing. Tus claves nunca se almacenan completas en un solo lugar.",
+        f2_t: "Herederos elegidos", f2_d: "Vos decidis quien recibe que. Incluso si tu heredero no sabe de cripto, ATMAN lo guia paso a paso.",
+        f3_d: "Transparentes, auditables y automaticos. Sin intermediarios humanos ni burocracia.",
+        f4_t: "Staking automatico", f4_d: "Tus activos generan rendimientos pasivos mientras estan protegidos. Tu legado sigue produciendo valor.",
+        f5_t: "Herencia consciente", f5_d: "Sin abogados ni bancos. Liberacion progresiva, condiciones educativas y custodia temporal para menores.",
+        f6_t: "Simple y humano", f6_d: "Interfaz pensada para usuarios comunes, no criptoexpertos. Poetica emocional y accesibilidad.",
+        comp_title: "ATMAN vs Competencia", comp_sub: "Lo que nos diferencia de las soluciones existentes.",
+        comp_th1: "Caracteristica", comp_r1: "Herederos sin experiencia cripto", comp_r1_no: "No esta pensado", comp_r1_yes: "Si, es central",
+        comp_r2_no: "Solo VeChain", comp_r3: "Staking automatico", comp_yes: "Si",
+        comp_r4: "Enfoque emocional", comp_r4_no: "Tecnico y frio", comp_r4_yes: "Poetico y accesible",
+        comp_r5: "Experiencia de usuario", comp_r5_no: "Cripto-avanzados", comp_r5_yes: "Usuarios comunes",
+        comp_r6: "Integracion legal", comp_r6_no: "Parcial", comp_r6_yes: "Servicios legales/notariales",
+        price_title: "Planes", price_sub: "Protege tu legado digital con el plan que se ajuste a tus necesidades.",
+        plan1_name: "Basico", plan1_price: "Gratis", plan1_desc: "Para empezar a proteger tu legado",
+        plan1_f1: "1 wallet registrada", plan1_f2: "1 heredero", plan1_f3: "Encriptacion basica", plan1_f4: "Deteccion de inactividad", plan1_btn: "Comenzar gratis",
+        plan2_period: "unico", plan2_desc: "Proteccion completa para tu familia",
+        plan2_f1: "Wallets ilimitadas", plan2_f2: "Multiples herederos", plan2_f4: "Staking automatico", plan2_f6: "Verificacion multifirma", plan2_btn: "Elegir Premium",
+        plan3_desc: "Para exchanges, wallets y empresas", plan3_f1: "Todo de Premium", plan3_f2: "API dedicada", plan3_f3: "Integracion B2B", plan3_f4: "Soporte legal incluido", plan3_f5: "SLA garantizado", plan3_btn: "Contactar",
+        faq_title: "Preguntas Frecuentes", faq_sub: "Todo lo que necesitas saber sobre ATMAN.",
+        faq1_q: "Es realmente seguro guardar mis claves en ATMAN?", faq1_a: "Si. Utilizamos encriptacion de grado militar y Shamir Secret Sharing. Tus claves nunca se almacenan completas en un solo lugar. Se fragmentan y distribuyen para maxima seguridad.",
+        faq2_q: "Que pasa si mi heredero no sabe nada de cripto?", faq2_a: "ATMAN ofrece multiples opciones: envio con guia paso a paso, wallet preconfigurada con custodio temporal, fideicomiso digital con liberacion progresiva, o delegacion a un adulto responsable.",
+        faq3_q: "Como se detecta el fallecimiento?", faq3_a: "Puedes configurar deteccion por inactividad (ej. no accedes en 6 meses), verificacion manual por un contacto de confianza, o multifirma donde X personas confirman.",
+        faq4_q: "Que es el staking automatico?", faq4_a: "Mientras tus activos estan protegidos en ATMAN, se conectan con protocolos como Lido, Rocket Pool o Aave para generar rendimientos pasivos. Tu legado sigue produciendo valor incluso cuando no estas.",
+        faq5_q: "ATMAN funciona con cualquier blockchain?", faq5_a: "Si. ATMAN es multichain e independiente de blockchain. Puedes registrar wallets de Ethereum, Bitcoin, Solana, y cualquier otro protocolo.",
+        faq6_q: "Es legal transferir cripto despues de un fallecimiento?", faq6_a: "ATMAN esta disenado para integrarse con servicios legales y notariales. Trabajamos en conformidad con leyes de proteccion de datos y planificamos soporte para distintas jurisdicciones.",
+        cta_title: "Protege tu legado hoy", cta_sub: "No dejes que tus cripto activos desaparezcan. Configura tu herencia digital en minutos.",
+        cta_btn1: "Comenzar ahora", cta_btn2: "Contactar equipo",
+        cta_quote: '"Cuando el cuerpo se apaga, el alma sigue su camino. Tambien tus claves pueden hacerlo." \u2014 ATMAN',
+        footer_copy: "\u00a9 2026 ATMAN. Todos los derechos reservados."
+      },
+      en: {
+        nav_problem: "Problem", nav_how: "How it works", nav_benefits: "Benefits", nav_plans: "Plans",
+        hero_tag: "Crypto Digital Inheritance", hero_sub: "Protect your digital legacy. An app that secures the fate of your crypto assets when you're no longer here. Secure and simple inheritance for your digital world.",
+        hero_cta1: "Learn more", hero_cta2: "See Plans",
+        stat1: "BTC lost forever", stat2: "of mined BTC inaccessible", stat3: "lost yearly without inheritance", stat4: "simple solutions today",
+        float1: "Advanced encryption", float3: "Automatic staking", float4: "Chosen heirs",
+        about_title: "The Problem & The Solution", about_sub: "Billions in cryptocurrency are lost every year because their owners pass away without leaving access instructions.",
+        about_h3: 'The problem is <span class="accent">real</span>', about_p1: "Chainalysis estimates that around 20% of all mined bitcoins are lost forever. More than 3 million BTC, equivalent to over $200 billion.",
+        about_p2: "Every year, between $4 and $10 billion in cryptocurrency is lost due to the death of owners without inheritance plans.",
+        about_li1: "Gerald Cotten (QuadrigaCX): $190M lost", about_li2: "Stefan Thomas: 7,000 BTC inaccessible (~$400M)", about_li3: "Users without secure tools to transmit keys", about_li4: "Growing problem with mass crypto adoption",
+        astat1: "BTC permanently lost", astat2: "Annual loss from deaths", astat3: "Crypto users in LATAM", astat4: "Accessible solutions today",
+        how_title: "How ATMAN Works", how_sub: "Simple, secure, no intermediaries. Set up your digital legacy in minutes.",
+        step1_h: "Register your assets", step1_p: "Upload your wallets, private keys, seed phrases, or access instructions. Everything is encrypted and fragmented.",
+        step2_h: "Choose heirs", step2_p: "Designate one or more people. Define what each receives, how they're notified, and personalized instructions.",
+        step3_h: "Set conditions", step3_p: "Inactivity, manual death verification, or multisig. You decide when the transfer is activated.",
+        step4_h: "Automatic release", step4_p: "Smart contracts execute the secure transfer. Encrypted data reaches your heirs through a verifiable channel.",
+        feat_title: "Benefits", feat_sub: "ATMAN doesn't just protect your digital inheritance, it grows it.",
+        f1_t: "Total security", f1_d: "Advanced encryption with Shamir Secret Sharing. Your keys are never stored complete in one place.",
+        f2_t: "Chosen heirs", f2_d: "You decide who receives what. Even if your heir knows nothing about crypto, ATMAN guides them step by step.",
+        f3_d: "Transparent, auditable, and automatic. No human intermediaries or bureaucracy.",
+        f4_t: "Automatic staking", f4_d: "Your assets generate passive returns while protected. Your legacy keeps producing value.",
+        f5_t: "Conscious inheritance", f5_d: "No lawyers or banks. Progressive release, educational conditions, and temporary custody for minors.",
+        f6_t: "Simple and human", f6_d: "Interface designed for regular users, not crypto experts. Emotional storytelling and accessibility.",
+        comp_title: "ATMAN vs Competition", comp_sub: "What sets us apart from existing solutions.",
+        comp_th1: "Feature", comp_r1: "Heirs without crypto experience", comp_r1_no: "Not designed for that", comp_r1_yes: "Yes, it's central",
+        comp_r2_no: "VeChain only", comp_r3: "Automatic staking", comp_yes: "Yes",
+        comp_r4: "Emotional approach", comp_r4_no: "Technical and cold", comp_r4_yes: "Poetic and accessible",
+        comp_r5: "User experience", comp_r5_no: "Crypto-advanced", comp_r5_yes: "Regular users",
+        comp_r6: "Legal integration", comp_r6_no: "Partial", comp_r6_yes: "Legal/notarial services",
+        price_title: "Plans", price_sub: "Protect your digital legacy with the plan that fits your needs.",
+        plan1_name: "Basic", plan1_price: "Free", plan1_desc: "To start protecting your legacy",
+        plan1_f1: "1 registered wallet", plan1_f2: "1 heir", plan1_f3: "Basic encryption", plan1_f4: "Inactivity detection", plan1_btn: "Start free",
+        plan2_period: "one-time", plan2_desc: "Complete protection for your family",
+        plan2_f1: "Unlimited wallets", plan2_f2: "Multiple heirs", plan2_f4: "Automatic staking", plan2_f6: "Multisig verification", plan2_btn: "Choose Premium",
+        plan3_desc: "For exchanges, wallets and companies", plan3_f1: "Everything in Premium", plan3_f2: "Dedicated API", plan3_f3: "B2B integration", plan3_f4: "Legal support included", plan3_f5: "Guaranteed SLA", plan3_btn: "Contact us",
+        faq_title: "Frequently Asked Questions", faq_sub: "Everything you need to know about ATMAN.",
+        faq1_q: "Is it really safe to store my keys in ATMAN?", faq1_a: "Yes. We use military-grade encryption and Shamir Secret Sharing. Your keys are never stored complete in one place. They are fragmented and distributed for maximum security.",
+        faq2_q: "What if my heir knows nothing about crypto?", faq2_a: "ATMAN offers multiple options: delivery with step-by-step guide, pre-configured wallet with temporary custodian, digital trust with progressive release, or delegation to a responsible adult.",
+        faq3_q: "How is death detected?", faq3_a: "You can configure inactivity detection (e.g., no access in 6 months), manual verification by a trusted contact, or multisig where X people confirm.",
+        faq4_q: "What is automatic staking?", faq4_a: "While your assets are protected in ATMAN, they connect to protocols like Lido, Rocket Pool, or Aave to generate passive returns. Your legacy keeps producing value even when you're gone.",
+        faq5_q: "Does ATMAN work with any blockchain?", faq5_a: "Yes. ATMAN is multichain and blockchain-independent. You can register wallets from Ethereum, Bitcoin, Solana, and any other protocol.",
+        faq6_q: "Is it legal to transfer crypto after death?", faq6_a: "ATMAN is designed to integrate with legal and notarial services. We work in compliance with data protection laws and plan support for different jurisdictions.",
+        cta_title: "Protect your legacy today", cta_sub: "Don't let your crypto assets disappear. Set up your digital inheritance in minutes.",
+        cta_btn1: "Start now", cta_btn2: "Contact team",
+        cta_quote: '"When the body shuts down, the soul continues its path. Your keys can too." \u2014 ATMAN',
+        footer_copy: "\u00a9 2026 ATMAN. All rights reserved."
+      },
+      pt: {
+        nav_problem: "Problema", nav_how: "Como funciona", nav_benefits: "Beneficios", nav_plans: "Planos",
+        hero_tag: "Heranca Digital Cripto", hero_sub: "Proteja seu legado digital. Um app que garante o destino dos seus cripto ativos quando voce nao estiver mais aqui. Heranca segura e simples para seu mundo digital.",
+        hero_cta1: "Saiba mais", hero_cta2: "Ver Planos",
+        stat1: "BTC perdidos para sempre", stat2: "de BTC minerados inacessiveis", stat3: "perdidos por ano sem heranca", stat4: "solucoes simples hoje",
+        float1: "Criptografia avancada", float3: "Staking automatico", float4: "Herdeiros escolhidos",
+        about_title: "O Problema & A Solucao", about_sub: "Bilhoes em criptomoedas sao perdidos todo ano porque seus donos falecem sem deixar instrucoes de acesso.",
+        about_h3: 'O problema e <span class="accent">real</span>', about_p1: "A Chainalysis estima que cerca de 20% de todos os bitcoins minerados estao perdidos para sempre. Mais de 3 milhoes de BTC, equivalentes a mais de $200 bilhoes.",
+        about_p2: "Todo ano, entre $4 e $10 bilhoes em criptomoedas sao perdidos devido a morte de proprietarios sem planos de heranca.",
+        about_li1: "Gerald Cotten (QuadrigaCX): $190M perdidos", about_li2: "Stefan Thomas: 7.000 BTC inacessiveis (~$400M)", about_li3: "Usuarios sem ferramentas seguras para transmitir chaves", about_li4: "Problema crescente com a adocao cripto massiva",
+        astat1: "BTC perdidos permanentemente", astat2: "Perda anual por falecimentos", astat3: "Usuarios cripto na LATAM", astat4: "Solucoes acessiveis atuais",
+        how_title: "Como Funciona o ATMAN", how_sub: "Simples, seguro, sem intermediarios. Configure seu legado digital em minutos.",
+        step1_h: "Registre seus ativos", step1_p: "Carregue suas wallets, chaves privadas, seed phrases ou instrucoes de acesso. Tudo fica criptografado e fragmentado.",
+        step2_h: "Escolha herdeiros", step2_p: "Designe uma ou mais pessoas. Defina o que cada um recebe, como sao notificados e instrucoes personalizadas.",
+        step3_h: "Configure condicoes", step3_p: "Inatividade, verificacao manual de falecimento, ou multisig. Voce decide quando a transferencia e ativada.",
+        step4_h: "Liberacao automatica", step4_p: "Smart contracts executam a transferencia segura. Dados criptografados chegam aos seus herdeiros por um canal verificavel.",
+        feat_title: "Beneficios", feat_sub: "ATMAN nao so protege sua heranca digital, faz ela crescer.",
+        f1_t: "Seguranca total", f1_d: "Criptografia avancada com Shamir Secret Sharing. Suas chaves nunca sao armazenadas completas em um so lugar.",
+        f2_t: "Herdeiros escolhidos", f2_d: "Voce decide quem recebe o que. Mesmo se seu herdeiro nao sabe nada de cripto, ATMAN o guia passo a passo.",
+        f3_d: "Transparentes, auditaveis e automaticos. Sem intermediarios humanos nem burocracia.",
+        f4_t: "Staking automatico", f4_d: "Seus ativos geram rendimentos passivos enquanto estao protegidos. Seu legado continua produzindo valor.",
+        f5_t: "Heranca consciente", f5_d: "Sem advogados nem bancos. Liberacao progressiva, condicoes educativas e custodia temporaria para menores.",
+        f6_t: "Simples e humano", f6_d: "Interface pensada para usuarios comuns, nao criptoexperts. Narrativa emocional e acessibilidade.",
+        comp_title: "ATMAN vs Concorrencia", comp_sub: "O que nos diferencia das solucoes existentes.",
+        comp_th1: "Caracteristica", comp_r1: "Herdeiros sem experiencia cripto", comp_r1_no: "Nao e pensado para isso", comp_r1_yes: "Sim, e central",
+        comp_r2_no: "Apenas VeChain", comp_r3: "Staking automatico", comp_yes: "Sim",
+        comp_r4: "Abordagem emocional", comp_r4_no: "Tecnico e frio", comp_r4_yes: "Poetico e acessivel",
+        comp_r5: "Experiencia do usuario", comp_r5_no: "Cripto-avancados", comp_r5_yes: "Usuarios comuns",
+        comp_r6: "Integracao legal", comp_r6_no: "Parcial", comp_r6_yes: "Servicos legais/notariais",
+        price_title: "Planos", price_sub: "Proteja seu legado digital com o plano que se adapta as suas necessidades.",
+        plan1_name: "Basico", plan1_price: "Gratis", plan1_desc: "Para comecar a proteger seu legado",
+        plan1_f1: "1 wallet registrada", plan1_f2: "1 herdeiro", plan1_f3: "Criptografia basica", plan1_f4: "Deteccao de inatividade", plan1_btn: "Comecar gratis",
+        plan2_period: "unico", plan2_desc: "Protecao completa para sua familia",
+        plan2_f1: "Wallets ilimitadas", plan2_f2: "Multiplos herdeiros", plan2_f4: "Staking automatico", plan2_f6: "Verificacao multisig", plan2_btn: "Escolher Premium",
+        plan3_desc: "Para exchanges, wallets e empresas", plan3_f1: "Tudo do Premium", plan3_f2: "API dedicada", plan3_f3: "Integracao B2B", plan3_f4: "Suporte legal incluido", plan3_f5: "SLA garantido", plan3_btn: "Contatar",
+        faq_title: "Perguntas Frequentes", faq_sub: "Tudo o que voce precisa saber sobre ATMAN.",
+        faq1_q: "E realmente seguro guardar minhas chaves no ATMAN?", faq1_a: "Sim. Utilizamos criptografia de grau militar e Shamir Secret Sharing. Suas chaves nunca sao armazenadas completas em um so lugar. Sao fragmentadas e distribuidas para maxima seguranca.",
+        faq2_q: "E se meu herdeiro nao sabe nada de cripto?", faq2_a: "ATMAN oferece multiplas opcoes: envio com guia passo a passo, wallet preconfigurada com custodiante temporario, fideicomisso digital com liberacao progressiva, ou delegacao a um adulto responsavel.",
+        faq3_q: "Como o falecimento e detectado?", faq3_a: "Voce pode configurar deteccao por inatividade (ex. nao acessa em 6 meses), verificacao manual por um contato de confianca, ou multisig onde X pessoas confirmam.",
+        faq4_q: "O que e o staking automatico?", faq4_a: "Enquanto seus ativos estao protegidos no ATMAN, eles se conectam com protocolos como Lido, Rocket Pool ou Aave para gerar rendimentos passivos. Seu legado continua produzindo valor mesmo quando voce nao esta.",
+        faq5_q: "ATMAN funciona com qualquer blockchain?", faq5_a: "Sim. ATMAN e multichain e independente de blockchain. Voce pode registrar wallets de Ethereum, Bitcoin, Solana e qualquer outro protocolo.",
+        faq6_q: "E legal transferir cripto apos um falecimento?", faq6_a: "ATMAN e projetado para integrar-se com servicos legais e notariais. Trabalhamos em conformidade com leis de protecao de dados e planejamos suporte para diferentes jurisdicoes.",
+        cta_title: "Proteja seu legado hoje", cta_sub: "Nao deixe seus cripto ativos desaparecerem. Configure sua heranca digital em minutos.",
+        cta_btn1: "Comecar agora", cta_btn2: "Contatar equipe",
+        cta_quote: '"Quando o corpo se apaga, a alma segue seu caminho. Suas chaves tambem podem." \u2014 ATMAN',
+        footer_copy: "\u00a9 2026 ATMAN. Todos os direitos reservados."
+      }
+    };
+
+    const LANG_META = {
+        es: { flag: "\u{1F1E6}\u{1F1F7}", code: "ES", name: "Espanol" },
+        en: { flag: "\u{1F1FA}\u{1F1F8}", code: "EN", name: "English" },
+        pt: { flag: "\u{1F1E7}\u{1F1F7}", code: "PT", name: "Portugues" }
+    };
+
+    let currentLang = 'es';
+
+    function detectLang() {
+        const saved = localStorage.getItem('atman_lang');
+        if (saved && T[saved]) return saved;
+        const browserLang = (navigator.language || navigator.userLanguage || 'es').toLowerCase();
+        if (browserLang.startsWith('pt')) return 'pt';
+        if (browserLang.startsWith('en')) return 'en';
+        return 'es';
+    }
+
+    function applyLang(lang) {
+        currentLang = lang;
+        localStorage.setItem('atman_lang', lang);
+        document.documentElement.lang = lang;
+        const dict = T[lang];
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (dict[key] !== undefined) {
+                if (el.getAttribute('data-i18n-html') === 'true' || dict[key].includes('<span')) {
+                    el.innerHTML = dict[key];
+                } else {
+                    el.textContent = dict[key];
+                }
+            }
+        });
+        // Update selector UI
+        const meta = LANG_META[lang];
+        document.getElementById('langFlag').textContent = meta.flag;
+        document.getElementById('langCode').textContent = meta.code;
+        document.querySelectorAll('.lang-option').forEach(opt => {
+            opt.classList.toggle('active', opt.dataset.lang === lang);
+        });
+    }
+
+    // Lang selector interactions
+    const langSelector = document.getElementById('langSelector');
+    document.getElementById('langBtn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        langSelector.classList.toggle('open');
+    });
+    document.querySelectorAll('.lang-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            applyLang(opt.dataset.lang);
+            langSelector.classList.remove('open');
+        });
+    });
+    document.addEventListener('click', () => langSelector.classList.remove('open'));
+
+    // Init language
+    applyLang(detectLang());
+
+    // ═══════════════════════════════════════
+    // SCROLL-SNAP
+    // ═══════════════════════════════════════
+    const sections = Array.from(document.querySelectorAll('[data-snap]'));
+    const navbar = document.getElementById('navbar');
+    let currentIndex = 0;
+    let isSnapping = false;
+
+    function easeInOutCubic(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
+
+    function smoothScrollTo(targetY, duration = 700) {
+        const startY = window.pageYOffset;
+        const diff = targetY - startY;
+        if (Math.abs(diff) < 2) { isSnapping = false; return; }
+        isSnapping = true;
+        const startTime = performance.now();
+        function step(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            window.scrollTo(0, startY + diff * easeInOutCubic(progress));
+            if (progress < 1) requestAnimationFrame(step);
+            else isSnapping = false;
+        }
+        requestAnimationFrame(step);
+    }
+
+    function goToSection(index) {
+        index = Math.max(0, Math.min(index, sections.length - 1));
+        if (index === currentIndex && isSnapping) return;
+        currentIndex = index;
+        smoothScrollTo(sections[index].offsetTop, 700);
+        navbar.classList.toggle('scrolled', index > 0);
+        sections[index].querySelectorAll('.feature-card, .step, .pricing-card').forEach(el => el.classList.add('visible'));
+    }
+
+    window.addEventListener('wheel', (e) => { e.preventDefault(); if (isSnapping) return; goToSection(currentIndex + (e.deltaY > 0 ? 1 : -1)); }, { passive: false });
+
+    let touchStartY = 0;
+    window.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
+    window.addEventListener('touchend', (e) => { if (isSnapping) return; const diff = touchStartY - e.changedTouches[0].clientY; if (Math.abs(diff) > 30) goToSection(currentIndex + (diff > 0 ? 1 : -1)); }, { passive: true });
+
+    window.addEventListener('keydown', (e) => {
+        if (isSnapping) return;
+        if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); goToSection(currentIndex + 1); }
+        else if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); goToSection(currentIndex - 1); }
+    });
+
+    window.addEventListener('resize', () => { window.scrollTo(0, sections[currentIndex].offsetTop); });
+
+    document.querySelectorAll('.navbar-links a[href^="#"], .footer-links a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.querySelector(link.getAttribute('href'));
+            if (target) { const idx = sections.indexOf(target); if (idx !== -1) goToSection(idx); }
+        });
+    });
+
+    document.querySelectorAll('.feature-card, .step, .pricing-card').forEach((el, i) => { el.style.transitionDelay = `${(i % 4) * 100}ms`; });
+    sections[0].querySelectorAll('.feature-card, .step, .pricing-card').forEach(el => el.classList.add('visible'));
+
+    // FAQ toggle
+    document.querySelectorAll('.faq-question').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = btn.parentElement;
+            const wasOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!wasOpen) item.classList.add('open');
+        });
+    });
+
+    // ═══════════════════════════════════════
+    // PARTICLES
+    // ═══════════════════════════════════════
+    (function() {
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let w, h, particles = [];
+        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+        function createParticles() {
+            particles = [];
+            const count = Math.floor((w * h) / 18000);
+            for (let i = 0; i < count; i++) {
+                particles.push({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.5+0.5, dx: (Math.random()-0.5)*0.3, dy: (Math.random()-0.5)*0.3, o: Math.random()*0.4+0.1 });
+            }
+        }
+        function draw() {
+            ctx.clearRect(0, 0, w, h);
+            particles.forEach(p => {
+                p.x += p.dx; p.y += p.dy;
+                if (p.x < 0) p.x = w; if (p.x > w) p.x = 0; if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fillStyle = `rgba(212,160,23,${p.o})`; ctx.fill();
+            });
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i+1; j < particles.length; j++) {
+                    const dx = particles[i].x-particles[j].x, dy = particles[i].y-particles[j].y;
+                    const dist = Math.sqrt(dx*dx+dy*dy);
+                    if (dist < 120) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(212,160,23,${0.06*(1-dist/120)})`; ctx.stroke(); }
+                }
+            }
+            requestAnimationFrame(draw);
+        }
+        resize(); createParticles(); draw();
+        window.addEventListener('resize', () => { resize(); createParticles(); });
+    })();
+    </script>
+</body>
+</html>
