@@ -199,7 +199,7 @@
         }
 
         /* ── Try Prototype CTA ── */
-        .try-proto { position: relative; z-index: 1; padding: 60px 24px; text-align: center; align-items: center; display: flex; flex-direction: column; }
+        .try-proto { position: relative; z-index: 1; padding: 48px 24px 0; text-align: center; display: flex; justify-content: center; }
         .btn-proto { display: inline-flex; align-items: center; gap: 12px; padding: 22px 52px; border-radius: 999px; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: 1px; text-decoration: none; text-transform: uppercase; color: #0a0a12; background: linear-gradient(135deg, #14b8a6, #0d9488); box-shadow: 0 0 30px rgba(20, 184, 166, 0.4), 0 0 60px rgba(20, 184, 166, 0.15); transition: transform 0.25s, box-shadow 0.25s; animation: proto-pulse 2.5s ease-in-out infinite; position: relative; overflow: hidden; }
         .btn-proto::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%); animation: proto-shine 3s ease-in-out infinite; }
         .btn-proto:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 0 40px rgba(20, 184, 166, 0.6), 0 0 80px rgba(20, 184, 166, 0.25); }
@@ -278,14 +278,6 @@
             <div class="stat-item"><div class="stat-value">$10B</div><div class="stat-label" data-i18n="stat3">perdidos por ano sin herencia</div></div>
             <div class="stat-item"><div class="stat-value">0</div><div class="stat-label" data-i18n="stat4">soluciones simples hoy</div></div>
         </div>
-    </section>
-
-    <!-- Try Prototype -->
-    <section class="snap-section try-proto" data-snap>
-        <a href="https://app.atman.com" target="_blank" class="btn-proto" data-i18n="proto_btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            TRY PROTOTYPE FOR TRIAL NOW
-        </a>
     </section>
 
     <!-- Mockup -->
@@ -415,6 +407,12 @@
                 </ul>
                 <a href="#" class="btn-plan btn-plan-outline" data-i18n="plan3_btn">Contactar</a>
             </div>
+        </div>
+        <div class="try-proto">
+            <a href="https://app.atman.com" target="_blank" class="btn-proto" data-i18n="proto_btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                TRY PROTOTYPE FOR TRIAL NOW
+            </a>
         </div>
     </section>
 
