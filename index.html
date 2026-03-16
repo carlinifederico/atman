@@ -198,6 +198,15 @@
             .stats-bar { gap: 24px; }
         }
 
+        /* ── Try Prototype CTA ── */
+        .try-proto { position: relative; z-index: 1; padding: 60px 24px; text-align: center; align-items: center; display: flex; flex-direction: column; }
+        .btn-proto { display: inline-flex; align-items: center; gap: 12px; padding: 22px 52px; border-radius: 999px; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: 1px; text-decoration: none; text-transform: uppercase; color: #0a0a12; background: linear-gradient(135deg, #14b8a6, #0d9488); box-shadow: 0 0 30px rgba(20, 184, 166, 0.4), 0 0 60px rgba(20, 184, 166, 0.15); transition: transform 0.25s, box-shadow 0.25s; animation: proto-pulse 2.5s ease-in-out infinite; position: relative; overflow: hidden; }
+        .btn-proto::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%); animation: proto-shine 3s ease-in-out infinite; }
+        .btn-proto:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 0 40px rgba(20, 184, 166, 0.6), 0 0 80px rgba(20, 184, 166, 0.25); }
+        .btn-proto svg { width: 22px; height: 22px; }
+        @keyframes proto-pulse { 0%, 100% { box-shadow: 0 0 30px rgba(20, 184, 166, 0.4), 0 0 60px rgba(20, 184, 166, 0.15); } 50% { box-shadow: 0 0 40px rgba(20, 184, 166, 0.6), 0 0 80px rgba(20, 184, 166, 0.25); } }
+        @keyframes proto-shine { 0% { transform: translateX(-100%) rotate(25deg); } 30%, 100% { transform: translateX(100%) rotate(25deg); } }
+
         #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
     </style>
 </head>
@@ -269,6 +278,14 @@
             <div class="stat-item"><div class="stat-value">$10B</div><div class="stat-label" data-i18n="stat3">perdidos por ano sin herencia</div></div>
             <div class="stat-item"><div class="stat-value">0</div><div class="stat-label" data-i18n="stat4">soluciones simples hoy</div></div>
         </div>
+    </section>
+
+    <!-- Try Prototype -->
+    <section class="snap-section try-proto" data-snap>
+        <a href="https://app.atman.com" target="_blank" class="btn-proto" data-i18n="proto_btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            TRY PROTOTYPE FOR TRIAL NOW
+        </a>
     </section>
 
     <!-- Mockup -->
@@ -448,6 +465,7 @@
         hero_tag: "Herencia Digital Cripto", hero_sub: "Protege tu legado digital. Una app que asegura el destino de tus cripto activos cuando ya no estes. Herencia segura y simple para tu mundo digital.",
         hero_cta1: "Conoce mas", hero_cta2: "Ver Planes",
         stat1: "BTC perdidos para siempre", stat2: "de BTC minados inaccesibles", stat3: "perdidos por ano sin herencia", stat4: "soluciones simples hoy",
+        proto_btn: "PROBAR PROTOTIPO GRATIS AHORA",
         float1: "Encriptacion avanzada", float3: "Staking automatico", float4: "Herederos elegidos",
         about_title: "El Problema & La Solucion", about_sub: "Miles de millones en criptomonedas se pierden cada ano porque sus duenos fallecen sin dejar instrucciones de acceso.",
         about_h3: 'El problema es <span class="accent">real</span>', about_p1: "Chainalysis estima que alrededor del 20% de todos los bitcoins minados estan perdidos para siempre. Mas de 3 millones de BTC, equivalentes a mas de $200 mil millones.",
@@ -495,6 +513,7 @@
         hero_tag: "Crypto Digital Inheritance", hero_sub: "Protect your digital legacy. An app that secures the fate of your crypto assets when you're no longer here. Secure and simple inheritance for your digital world.",
         hero_cta1: "Learn more", hero_cta2: "See Plans",
         stat1: "BTC lost forever", stat2: "of mined BTC inaccessible", stat3: "lost yearly without inheritance", stat4: "simple solutions today",
+        proto_btn: "TRY PROTOTYPE FOR TRIAL NOW",
         float1: "Advanced encryption", float3: "Automatic staking", float4: "Chosen heirs",
         about_title: "The Problem & The Solution", about_sub: "Billions in cryptocurrency are lost every year because their owners pass away without leaving access instructions.",
         about_h3: 'The problem is <span class="accent">real</span>', about_p1: "Chainalysis estimates that around 20% of all mined bitcoins are lost forever. More than 3 million BTC, equivalent to over $200 billion.",
@@ -542,6 +561,7 @@
         hero_tag: "Heranca Digital Cripto", hero_sub: "Proteja seu legado digital. Um app que garante o destino dos seus cripto ativos quando voce nao estiver mais aqui. Heranca segura e simples para seu mundo digital.",
         hero_cta1: "Saiba mais", hero_cta2: "Ver Planos",
         stat1: "BTC perdidos para sempre", stat2: "de BTC minerados inacessiveis", stat3: "perdidos por ano sem heranca", stat4: "solucoes simples hoje",
+        proto_btn: "TESTAR PROTOTIPO GRATIS AGORA",
         float1: "Criptografia avancada", float3: "Staking automatico", float4: "Herdeiros escolhidos",
         about_title: "O Problema & A Solucao", about_sub: "Bilhoes em criptomoedas sao perdidos todo ano porque seus donos falecem sem deixar instrucoes de acesso.",
         about_h3: 'O problema e <span class="accent">real</span>', about_p1: "A Chainalysis estima que cerca de 20% de todos os bitcoins minerados estao perdidos para sempre. Mais de 3 milhoes de BTC, equivalentes a mais de $200 bilhoes.",
