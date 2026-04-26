@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATMAN — Factibilidad con Claude Code</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; color: #e2e0ec; background: #0a0a12; min-height: 100vh; overflow-x: hidden; line-height: 1.6; }
+
+        /* ── Background blobs ── */
+        .blob { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.18; pointer-events: none; z-index: 0; }
+        .blob-1 { width: 600px; height: 600px; background: #d4a017; top: -200px; left: -150px; }
+        .blob-2 { width: 450px; height: 450px; background: #14b8a6; top: 40%; right: -120px; }
+        .blob-3 { width: 400px; height: 400px; background: #7c3aed; bottom: -100px; left: 25%; }
+
+        /* ── Navbar ── */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; transition: background 0.3s, box-shadow 0.3s; }
+        .navbar.scrolled { background: rgba(10, 10, 18, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3); }
+        .navbar-logo { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 20px; color: #f5f0e6; text-decoration: none; letter-spacing: 4px; display: flex; align-items: center; gap: 14px; }
+        .navbar-logo .meta-tag { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 11px; color: #d4a017; letter-spacing: 2px; padding: 4px 10px; border: 1px solid rgba(212,160,23,0.3); border-radius: 999px; background: rgba(212,160,23,0.08); }
+        .navbar-links { display: flex; gap: 24px; list-style: none; }
+        .navbar-links a { font-size: 13px; font-weight: 500; color: #9a96a8; text-decoration: none; transition: color 0.2s; }
+        .navbar-links a:hover { color: #d4a017; }
+
+        /* ── Hero ── */
+        .hero { position: relative; z-index: 1; padding: 160px 24px 80px; text-align: center; max-width: 980px; margin: 0 auto; }
+        .hero-tag { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #d4a017; margin-bottom: 28px; padding: 8px 20px; border: 1px solid rgba(212, 160, 23, 0.3); border-radius: 999px; background: rgba(212, 160, 23, 0.08); }
+        .hero-title { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: clamp(40px, 7vw, 72px); letter-spacing: -2px; line-height: 1.05; margin-bottom: 24px; background: linear-gradient(135deg, #f5f0e6 0%, #d4a017 50%, #14b8a6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-subtitle { font-size: clamp(16px, 2vw, 19px); color: #9a96a8; line-height: 1.7; max-width: 720px; margin: 0 auto 40px; }
+        .hero-meta { display: inline-flex; align-items: center; gap: 24px; padding: 14px 24px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 999px; flex-wrap: wrap; justify-content: center; }
+        .hero-meta-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #b0adc0; }
+        .hero-meta-item .label { color: #6b6880; }
+        .hero-meta-item .value { font-weight: 600; color: #f5f0e6; }
+        .hero-meta-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); }
+
+        /* ── Sections ── */
+        .section { position: relative; z-index: 1; padding: 80px 24px; max-width: 1100px; margin: 0 auto; }
+        .section-eyebrow { display: block; font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #d4a017; text-align: center; margin-bottom: 14px; }
+        .section-heading { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: clamp(28px, 4vw, 40px); text-align: center; margin-bottom: 16px; color: #f5f0e6; line-height: 1.15; }
+        .section-sub { text-align: center; color: #7a7690; font-size: 16px; line-height: 1.7; max-width: 700px; margin: 0 auto 56px; }
+
+        /* ── Verdict cards ── */
+        .verdict-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .verdict-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); border-radius: 18px; padding: 32px 28px; position: relative; overflow: hidden; transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s; }
+        .verdict-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .verdict-card.go { border-color: rgba(20, 184, 166, 0.2); }
+        .verdict-card.go::before { background: #14b8a6; }
+        .verdict-card.caution { border-color: rgba(212, 160, 23, 0.2); }
+        .verdict-card.caution::before { background: #d4a017; }
+        .verdict-card.stop { border-color: rgba(233, 69, 96, 0.25); }
+        .verdict-card.stop::before { background: #e94560; }
+        .verdict-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .verdict-icon { font-size: 32px; line-height: 1; margin-bottom: 16px; }
+        .verdict-label { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+        .verdict-card.go .verdict-label { color: #14b8a6; }
+        .verdict-card.caution .verdict-label { color: #d4a017; }
+        .verdict-card.stop .verdict-label { color: #e94560; }
+        .verdict-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 20px; color: #f5f0e6; margin-bottom: 12px; line-height: 1.3; }
+        .verdict-desc { font-size: 14px; color: #9a96a8; line-height: 1.65; }
+
+        /* ── TL;DR card ── */
+        .tldr { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 0 24px; }
+        .tldr-card { background: linear-gradient(135deg, rgba(212,160,23,0.08), rgba(20,184,166,0.05)); border: 1px solid rgba(212,160,23,0.25); border-radius: 20px; padding: 40px 36px; text-align: center; }
+        .tldr-label { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #d4a017; margin-bottom: 14px; }
+        .tldr-text { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: clamp(18px, 2.4vw, 24px); color: #f5f0e6; line-height: 1.5; max-width: 820px; margin: 0 auto; }
+        .tldr-text .accent-go { color: #14b8a6; }
+        .tldr-text .accent-stop { color: #e94560; }
+
+        /* ── Status grid ── */
+        .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .status-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); border-radius: 18px; padding: 32px; }
+        .status-head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(20,184,166,0.12); color: #14b8a6; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-radius: 999px; border: 1px solid rgba(20,184,166,0.25); }
+        .status-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 18px; color: #f5f0e6; }
+        .status-card ul { list-style: none; padding: 0; }
+        .status-card ul li { padding: 6px 0; font-size: 14px; color: #b0adc0; display: flex; align-items: flex-start; gap: 10px; line-height: 1.6; }
+        .status-card ul li::before { content: '›'; color: #d4a017; font-weight: 700; flex-shrink: 0; margin-top: -1px; }
+        .status-card ul li strong { color: #f5f0e6; font-weight: 600; }
+        .status-card .stack-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+        .stack-chip { font-size: 11px; font-weight: 500; padding: 4px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 999px; color: #b0adc0; }
+
+        /* ── Missing list ── */
+        .missing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .missing-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 22px; transition: border-color 0.25s, transform 0.25s; }
+        .missing-card:hover { border-color: rgba(212,160,23,0.25); transform: translateY(-2px); }
+        .missing-card .num { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 14px; color: #d4a017; margin-bottom: 8px; letter-spacing: 1px; }
+        .missing-card .t { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 15px; color: #f5f0e6; margin-bottom: 6px; }
+        .missing-card .d { font-size: 13px; color: #7a7690; line-height: 1.55; }
+
+        /* ── Feasibility table ── */
+        .feas-table-wrap { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 18px; overflow: hidden; }
+        .feas-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .feas-table thead { background: rgba(212,160,23,0.05); }
+        .feas-table th { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; padding: 18px 20px; text-align: left; color: #d4a017; border-bottom: 1px solid rgba(212,160,23,0.2); }
+        .feas-table th:nth-child(2) { width: 200px; }
+        .feas-table td { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #b0adc0; vertical-align: top; }
+        .feas-table tr:last-child td { border-bottom: none; }
+        .feas-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .feas-table .cap { color: #f5f0e6; font-weight: 500; }
+        .feas-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; white-space: nowrap; }
+        .feas-badge.go { background: rgba(20,184,166,0.12); color: #14b8a6; border: 1px solid rgba(20,184,166,0.25); }
+        .feas-badge.high { background: rgba(20,184,166,0.18); color: #2dd4bf; border: 1px solid rgba(20,184,166,0.35); }
+        .feas-badge.mid { background: rgba(168,212,23,0.1); color: #d4d017; border: 1px solid rgba(212,160,23,0.25); }
+        .feas-badge.partial { background: rgba(212,160,23,0.12); color: #d4a017; border: 1px solid rgba(212,160,23,0.3); }
+        .feas-badge.risk { background: rgba(233,69,96,0.1); color: #f4767d; border: 1px solid rgba(233,69,96,0.3); }
+        .feas-badge.no { background: rgba(233,69,96,0.18); color: #ff7080; border: 1px solid rgba(233,69,96,0.4); }
+        .feas-legend { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 24px; font-size: 12px; color: #7a7690; }
+        .feas-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+
+        /* ── Two-column compare ── */
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .compare-col { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); border-radius: 18px; padding: 32px; }
+        .compare-col.go { border-color: rgba(20,184,166,0.25); }
+        .compare-col.no { border-color: rgba(233,69,96,0.25); }
+        .compare-head { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .compare-head .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .compare-col.go .dot { background: #14b8a6; box-shadow: 0 0 12px rgba(20,184,166,0.6); }
+        .compare-col.no .dot { background: #e94560; box-shadow: 0 0 12px rgba(233,69,96,0.6); }
+        .compare-head h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 17px; color: #f5f0e6; }
+        .compare-col ul { list-style: none; padding: 0; }
+        .compare-col ul li { padding: 12px 0; font-size: 14px; color: #b0adc0; line-height: 1.65; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .compare-col ul li:last-child { border-bottom: none; }
+        .compare-col ul li strong { color: #f5f0e6; font-weight: 600; display: block; margin-bottom: 4px; }
+
+        /* ── Phases timeline ── */
+        .phases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .phase { position: relative; background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 32px 28px; transition: transform 0.25s, box-shadow 0.25s; }
+        .phase:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .phase.go { border-color: rgba(20,184,166,0.3); }
+        .phase.caution { border-color: rgba(212,160,23,0.3); }
+        .phase.stop { border-color: rgba(233,69,96,0.3); }
+        .phase-num { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 18px; }
+        .phase.go .phase-num { background: linear-gradient(135deg, #14b8a6, #0d9488); color: #0a0a12; }
+        .phase.caution .phase-num { background: linear-gradient(135deg, #d4a017, #b8860b); color: #0a0a12; }
+        .phase.stop .phase-num { background: linear-gradient(135deg, #e94560, #b8334a); color: #f5f0e6; }
+        .phase-tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; margin-bottom: 12px; }
+        .phase.go .phase-tag { background: rgba(20,184,166,0.12); color: #14b8a6; border: 1px solid rgba(20,184,166,0.25); }
+        .phase.caution .phase-tag { background: rgba(212,160,23,0.12); color: #d4a017; border: 1px solid rgba(212,160,23,0.25); }
+        .phase.stop .phase-tag { background: rgba(233,69,96,0.12); color: #e94560; border: 1px solid rgba(233,69,96,0.3); }
+        .phase-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 19px; color: #f5f0e6; margin-bottom: 8px; line-height: 1.3; }
+        .phase-meta { font-size: 12px; color: #6b6880; margin-bottom: 16px; letter-spacing: 0.5px; }
+        .phase ul { list-style: none; padding: 0; margin-bottom: 16px; }
+        .phase ul li { font-size: 13px; color: #b0adc0; padding: 5px 0; line-height: 1.6; display: flex; align-items: flex-start; gap: 8px; }
+        .phase ul li::before { content: '•'; color: #d4a017; flex-shrink: 0; }
+        .phase-outcome { font-size: 13px; color: #9a96a8; line-height: 1.6; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06); }
+        .phase-outcome strong { color: #f5f0e6; display: block; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+
+        /* ── Recommendation banner ── */
+        .recommendation { position: relative; z-index: 1; max-width: 980px; margin: 40px auto 0; padding: 0 24px; }
+        .rec-card { background: linear-gradient(135deg, rgba(233,69,96,0.08), rgba(212,160,23,0.06)); border: 1px solid rgba(233,69,96,0.25); border-radius: 20px; padding: 40px 36px; }
+        .rec-label { display: inline-block; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: #e94560; padding: 5px 14px; background: rgba(233,69,96,0.12); border-radius: 999px; border: 1px solid rgba(233,69,96,0.3); margin-bottom: 18px; }
+        .rec-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: clamp(22px, 3vw, 30px); color: #f5f0e6; line-height: 1.3; margin-bottom: 14px; }
+        .rec-body { font-size: 15px; color: #b0adc0; line-height: 1.75; }
+        .rec-body strong { color: #f5f0e6; }
+
+        /* ── Files / verification ── */
+        .files-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .files-col { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 28px; }
+        .files-col h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 16px; color: #f5f0e6; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+        .files-col h3 .dot-gold { width: 8px; height: 8px; border-radius: 50%; background: #d4a017; }
+        .files-col ul { list-style: none; padding: 0; }
+        .files-col ul li { padding: 8px 0; font-size: 13px; color: #b0adc0; border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.55; }
+        .files-col ul li:last-child { border-bottom: none; }
+        .files-col code { font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 12px; color: #d4a017; background: rgba(212,160,23,0.06); padding: 2px 6px; border-radius: 4px; }
+
+        /* ── Footer ── */
+        .footer { position: relative; z-index: 1; text-align: center; padding: 48px 24px; background: #07070d; margin-top: 60px; }
+        .footer-logo { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 18px; color: #f5f0e6; letter-spacing: 4px; margin-bottom: 10px; }
+        .footer-tagline { font-size: 13px; color: #6b6880; margin-bottom: 18px; }
+        .footer-links { display: flex; justify-content: center; gap: 24px; list-style: none; margin-bottom: 18px; flex-wrap: wrap; }
+        .footer-links a { font-size: 13px; color: #9a96a8; text-decoration: none; transition: color 0.2s; }
+        .footer-links a:hover { color: #d4a017; }
+        .footer-copy { font-size: 12px; color: #4a4860; }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .verdict-grid, .status-grid, .compare-grid, .files-grid { grid-template-columns: 1fr; }
+            .missing-grid { grid-template-columns: repeat(2, 1fr); }
+            .phases { grid-template-columns: 1fr; }
+            .navbar-links { display: none; }
+            .navbar-logo .meta-tag { display: none; }
+            .feas-table { font-size: 13px; }
+            .feas-table th, .feas-table td { padding: 12px 14px; }
+            .feas-table th:nth-child(2) { width: auto; }
+        }
+        @media (max-width: 600px) {
+            .missing-grid { grid-template-columns: 1fr; }
+            .hero { padding: 130px 20px 60px; }
+            .section { padding: 60px 20px; }
+            .feas-table { display: block; overflow-x: auto; white-space: nowrap; }
+            .feas-table td { white-space: normal; }
+        }
+
+        /* Reveal-on-scroll */
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <nav class="navbar" id="navbar">
+        <a href="#top" class="navbar-logo">ATMAN <span class="meta-tag">FACTIBILIDAD</span></a>
+        <ul class="navbar-links">
+            <li><a href="#veredicto">Veredicto</a></li>
+            <li><a href="#estado">Estado</a></li>
+            <li><a href="#tabla">Por capa</a></li>
+            <li><a href="#fases">Plan</a></li>
+            <li><a href="#recomendacion">Recomendación</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero" id="top">
+        <span class="hero-tag">Análisis · 2026-04-26</span>
+        <h1 class="hero-title">¿Cuán factible es realizar ATMAN con Claude Code?</h1>
+        <p class="hero-subtitle">Evaluación honesta para un producto que custodia activos cripto, asumiendo un único developer + Claude Code como copiloto, y producción como objetivo.</p>
+        <div class="hero-meta">
+            <div class="hero-meta-item"><span class="label">Alcance</span> <span class="value">Producción</span></div>
+            <div class="hero-meta-divider"></div>
+            <div class="hero-meta-item"><span class="label">Equipo</span> <span class="value">Solo + Claude Code</span></div>
+            <div class="hero-meta-divider"></div>
+            <div class="hero-meta-item"><span class="label">Estado</span> <span class="value">MVP demo listo</span></div>
+        </div>
+    </header>
+
+    <section class="tldr reveal">
+        <div class="tldr-card">
+            <div class="tldr-label">Resumen en una línea</div>
+            <p class="tldr-text">
+                Llegar a <span class="accent-go">MVP demo o beta sin custodia</span> con Claude Code solo: <strong>muy factible</strong>. Llegar a <span class="accent-stop">custodia real de fondos en mainnet</span> sin equipo ni auditoría externa: <strong>no es factible</strong> — y no por límite de Claude Code, sino por límite del modelo "solo dev" para un producto que custodia dinero ajeno.
+            </p>
+        </div>
+    </section>
+
+    <section class="section" id="veredicto">
+        <span class="section-eyebrow">Veredicto</span>
+        <h2 class="section-heading">Tres zonas, tres reglas</h2>
+        <p class="section-sub">El proyecto no es un bloque monolítico: cada capa tiene un nivel de riesgo distinto frente al modelo "solo + Claude Code".</p>
+        <div class="verdict-grid">
+            <div class="verdict-card go reveal">
+                <div class="verdict-icon">🟢</div>
+                <div class="verdict-label">Adelante</div>
+                <h3 class="verdict-title">UI, dashboard, CRUDs, tests, CI/CD</h3>
+                <p class="verdict-desc">Next.js + TS + Supabase + shadcn es exactamente el stack donde Claude Code rinde mejor. Pulir el prototipo, agregar tests, observabilidad y endurecer Supabase: semanas, no meses.</p>
+            </div>
+            <div class="verdict-card caution reveal">
+                <div class="verdict-icon">🟡</div>
+                <div class="verdict-label">Con cuidado</div>
+                <h3 class="verdict-title">Lectura on-chain, KYC, notificaciones</h3>
+                <p class="verdict-desc">Integraciones con Alchemy/Moralis, Sumsub/Persona, Resend/Twilio. Claude Code las hace, pero el threat model y las decisiones de flujo legal las definís vos — antes de tocar mainnet.</p>
+            </div>
+            <div class="verdict-card stop reveal">
+                <div class="verdict-icon">🔴</div>
+                <div class="verdict-label">No solo</div>
+                <h3 class="verdict-title">Smart contracts, custodia, staking, auditoría</h3>
+                <p class="verdict-desc">Código que mueve dinero no se shipea sin (a) especialista on-chain y (b) auditoría externa. Trail of Bits, OpenZeppelin o Halborn cobran USD 30k–150k. Compliance LATAM requiere abogado por país.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="estado">
+        <span class="section-eyebrow">Estado actual</span>
+        <h2 class="section-heading">Lo que ya existe</h2>
+        <p class="section-sub">Antes de hablar de qué falta, vale ver lo que ya está construido. Y es bastante.</p>
+        <div class="status-grid">
+            <div class="status-card reveal">
+                <div class="status-head">
+                    <span class="status-pill">✓ Completa</span>
+                    <span class="status-title">Landing — <code style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #d4a017;">index.html</code></span>
+                </div>
+                <ul>
+                    <li>HTML/CSS/JS vanilla, ~71 KB, un único archivo</li>
+                    <li><strong>i18n con autodetección</strong>: español, inglés, portugués</li>
+                    <li>Secciones: Problem · How-it-works · Features · Pricing · FAQ · CTA</li>
+                    <li>Botón "TRY PROTOTYPE" → <code style="font-family:monospace;font-size:12px;color:#d4a017;">atman-app.vercel.app</code></li>
+                    <li>Deck PDF de pitch en <code style="font-family:monospace;font-size:12px;color:#d4a017;">_MAT/</code></li>
+                </ul>
+            </div>
+            <div class="status-card reveal">
+                <div class="status-head">
+                    <span class="status-pill">✓ MVP demo</span>
+                    <span class="status-title">App — <code style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #d4a017;">atman-app/</code></span>
+                </div>
+                <ul>
+                    <li><strong>~42 archivos TS/TSX, ~4.844 LoC</strong> — bien estructurado, sin bloat</li>
+                    <li>Auth, dashboard, CRUDs de wallets / herederos / distribuciones</li>
+                    <li>Validación de porcentajes (suma 100%), check-in de prueba de vida</li>
+                    <li>Simulación de activación + vista heredero + activity log</li>
+                    <li>Flag <code style="font-family:monospace;font-size:12px;color:#d4a017;">DEMO_MODE</code> con datos ficticios</li>
+                    <li><strong>Sin tests, sin CI/CD, sin pre-commit hooks</strong></li>
+                </ul>
+                <div class="stack-row">
+                    <span class="stack-chip">Next.js 16</span>
+                    <span class="stack-chip">React 19</span>
+                    <span class="stack-chip">TS strict</span>
+                    <span class="stack-chip">Tailwind 4</span>
+                    <span class="stack-chip">shadcn/ui</span>
+                    <span class="stack-chip">Supabase</span>
+                    <span class="stack-chip">Zod</span>
+                    <span class="stack-chip">Recharts</span>
+                    <span class="stack-chip">Framer Motion</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <span class="section-eyebrow">Lo que falta</span>
+        <h2 class="section-heading">9 piezas para llegar a producción</h2>
+        <p class="section-sub">No la UI — el núcleo que el demo todavía no tiene. Cada ítem es una decisión técnica + una de riesgo.</p>
+        <div class="missing-grid">
+            <div class="missing-card reveal"><div class="num">01</div><div class="t">Custodia criptográfica</div><div class="d">Shamir Secret Sharing real, key management, HSM o equivalente.</div></div>
+            <div class="missing-card reveal"><div class="num">02</div><div class="t">Smart contracts</div><div class="d">Liberación condicional, multifirma, dead-man switch on-chain.</div></div>
+            <div class="missing-card reveal"><div class="num">03</div><div class="t">Integraciones blockchain</div><div class="d">Lectura + transferencias en BTC, ETH, SOL, Polygon, Avalanche, BNB.</div></div>
+            <div class="missing-card reveal"><div class="num">04</div><div class="t">Staking automático</div><div class="d">Lido, Rocket Pool, Aave — cada uno con su contrato y sus riesgos.</div></div>
+            <div class="missing-card reveal"><div class="num">05</div><div class="t">Notificaciones reales</div><div class="d">Email, SMS a herederos. Posible verificación KYC.</div></div>
+            <div class="missing-card reveal"><div class="num">06</div><div class="t">Auditoría externa</div><div class="d">Trail of Bits / OpenZeppelin / Halborn. USD 30k–150k.</div></div>
+            <div class="missing-card reveal"><div class="num">07</div><div class="t">Compliance LATAM</div><div class="d">Derecho sucesorio digital varía por país. Abogado, no código.</div></div>
+            <div class="missing-card reveal"><div class="num">08</div><div class="t">Operaciones 24/7</div><div class="d">Custodia no admite downtime. Monitoreo, incident response, soporte.</div></div>
+            <div class="missing-card reveal"><div class="num">09</div><div class="t">Tests + CI/CD + observabilidad</div><div class="d">Vitest, Playwright, GitHub Actions, Sentry, métricas, logs.</div></div>
+        </div>
+    </section>
+
+    <section class="section" id="tabla">
+        <span class="section-eyebrow">Por capa</span>
+        <h2 class="section-heading">Factibilidad detallada</h2>
+        <p class="section-sub">Capa por capa, con la decisión de "solo + Claude Code". Verde = adelante. Amarillo = con disciplina. Rojo = no shipear sin equipo.</p>
+        <div class="feas-table-wrap reveal">
+            <table class="feas-table">
+                <thead>
+                    <tr><th>Capa</th><th>Veredicto</th><th>Comentario</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td class="cap">Landing y marketing site</td><td><span class="feas-badge go">Ya está hecho</span></td><td>Mantener i18n, agregar páginas legales (Terms, Privacy, Disclaimer cripto).</td></tr>
+                    <tr><td class="cap">Prototipo demo (estado actual)</td><td><span class="feas-badge go">Ya está hecho</span></td><td>Pulir UX, animaciones, edge cases, mobile, accesibilidad.</td></tr>
+                    <tr><td class="cap">Auth + DB + dashboard real</td><td><span class="feas-badge high">Sí, alta</span></td><td>Stack Next.js + Supabase + shadcn es donde Claude Code rinde mejor.</td></tr>
+                    <tr><td class="cap">CRUDs, formularios, validación Zod</td><td><span class="feas-badge high">Sí, alta</span></td><td>Trabajo repetitivo bien tipado — ideal para Claude Code.</td></tr>
+                    <tr><td class="cap">Tests unit / integración / e2e</td><td><span class="feas-badge high">Sí, alta</span></td><td>Vitest + Playwright. Claude Code escribe tests rápido si los pedís explícitamente.</td></tr>
+                    <tr><td class="cap">CI/CD (GitHub Actions, Vercel)</td><td><span class="feas-badge high">Sí, alta</span></td><td>Configuración estándar, días de trabajo.</td></tr>
+                    <tr><td class="cap">Notificaciones email / SMS</td><td><span class="feas-badge mid">Sí, media</span></td><td>Resend / Twilio / Postmark — integración estándar.</td></tr>
+                    <tr><td class="cap">Lectura on-chain (balances, txs)</td><td><span class="feas-badge mid">Sí, media</span></td><td>Alchemy / Moralis / Helius SDKs. Solo lectura es bajo riesgo.</td></tr>
+                    <tr><td class="cap">KYC + onboarding regulado</td><td><span class="feas-badge partial">Parcial</span></td><td>Sumsub / Persona para la integración. El flujo legal lo definís vos + abogado.</td></tr>
+                    <tr><td class="cap">Smart contracts Solidity</td><td><span class="feas-badge risk">Riesgoso solo</span></td><td>Claude puede escribirlos. El bug que cuesta USD 1M no se ve en code review propio.</td></tr>
+                    <tr><td class="cap">Shamir Secret Sharing en producción</td><td><span class="feas-badge risk">Riesgoso solo</span></td><td>Existen libs sólidas. Lo difícil es el threat model y la operación de los shares.</td></tr>
+                    <tr><td class="cap">Integraciones de staking (Lido, Aave, RP)</td><td><span class="feas-badge risk">Riesgoso solo</span></td><td>Cada protocolo tiene su contrato. Los bugs de aprobaciones ERC-20 son la fuente típica de drains.</td></tr>
+                    <tr><td class="cap">Custodia de seed phrases / claves</td><td><span class="feas-badge no">No solo</span></td><td>Esto define el producto. Un fallo acá = fin del producto.</td></tr>
+                    <tr><td class="cap">Auditoría de seguridad</td><td><span class="feas-badge no">No</span></td><td>Por definición externa. Trail of Bits / OpenZeppelin / Halborn: USD 30k–150k.</td></tr>
+                    <tr><td class="cap">Compliance LATAM por país</td><td><span class="feas-badge no">No</span></td><td>Trabajo de abogado, no de código.</td></tr>
+                    <tr><td class="cap">On-call 24/7 / incident response</td><td><span class="feas-badge no">No solo</span></td><td>Custodia no permite que el único humano duerma.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="feas-legend">
+            <span class="feas-legend-item"><span class="feas-badge go">Adelante</span></span>
+            <span class="feas-legend-item"><span class="feas-badge high">Sí, alta</span></span>
+            <span class="feas-legend-item"><span class="feas-badge mid">Sí, media</span></span>
+            <span class="feas-legend-item"><span class="feas-badge partial">Parcial</span></span>
+            <span class="feas-legend-item"><span class="feas-badge risk">Riesgoso solo</span></span>
+            <span class="feas-legend-item"><span class="feas-badge no">No solo</span></span>
+        </div>
+    </section>
+
+    <section class="section">
+        <span class="section-eyebrow">Claude Code</span>
+        <h2 class="section-heading">Dónde da palanca, dónde no alcanza</h2>
+        <p class="section-sub">Una herramienta es buena en lo que es buena. Forzarla fuera de su zona se paga caro cuando hay dinero ajeno en juego.</p>
+        <div class="compare-grid">
+            <div class="compare-col go reveal">
+                <div class="compare-head"><span class="dot"></span><h3>Dónde da palanca real</h3></div>
+                <ul>
+                    <li><strong>Velocidad en el stack ya elegido</strong>Llevar el prototipo a beta robusta con tests, error states, accesibilidad e i18n end-to-end es semanas, no meses.</li>
+                    <li><strong>Reducción de la deuda actual</strong>Vitest + Playwright + GitHub Actions + Sentry + linter estricto: días de trabajo guiado.</li>
+                    <li><strong>Páginas y formularios</strong>El patrón ya está. Replicar y extender es trivial cuando el sistema de tipos es sólido.</li>
+                    <li><strong>Documentación interna</strong>ADRs, runbooks, arquitectura — Claude Code los redacta a partir del código real.</li>
+                    <li><strong>Migraciones Supabase y RLS policies</strong>Bien guiado, escribe SQL y políticas correctas. Revisalas igual.</li>
+                </ul>
+            </div>
+            <div class="compare-col no reveal">
+                <div class="compare-head"><span class="dot"></span><h3>Dónde no alcanza solo</h3></div>
+                <ul>
+                    <li><strong>Código que mueve dinero</strong>Smart contracts, firma de transacciones, manejo de claves. Sin (a) especialista en seguridad y (b) auditoría externa, shipear a mainnet es jugarse el producto entero.</li>
+                    <li><strong>Decisiones de threat model</strong>¿Qué pasa si Supabase es comprometido? ¿Si un heredero coludde con un atacante? ¿Nation-state? Estas decisiones las tomás vos.</li>
+                    <li><strong>Decisiones legales</strong>"Transferencia automática sin abogados" choca con derecho sucesorio real de cada país LATAM. No se programa: se negocia.</li>
+                    <li><strong>Operación humana</strong>Si un heredero llama un domingo a las 3 AM, Claude Code no atiende.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="fases">
+        <span class="section-eyebrow">Plan por fases</span>
+        <h2 class="section-heading">Cómo escalar de demo a producción</h2>
+        <p class="section-sub">Tres fases con factibilidad decreciente para "solo + Claude Code". El salto a Fase 3 implica equipo y capital — no es una decisión técnica.</p>
+        <div class="phases">
+            <div class="phase go reveal">
+                <div class="phase-num">1</div>
+                <div class="phase-tag">100% factible solo</div>
+                <h3 class="phase-title">Demo investor-ready</h3>
+                <div class="phase-meta">Duración: 4–6 semanas</div>
+                <ul>
+                    <li>Pulir prototipo: i18n, error states, loading states, mobile, accesibilidad</li>
+                    <li>Vitest + Playwright + GitHub Actions + Sentry</li>
+                    <li>Endurecer Supabase: RLS policies, migrations versionadas, backups</li>
+                    <li>Páginas legales (Terms, Privacy, Disclaimer cripto)</li>
+                </ul>
+                <div class="phase-outcome">
+                    <strong>Outcome</strong>
+                    Producto demoable a inversores y a early users como "vault de instrucciones cifradas, sin custodia".
+                </div>
+            </div>
+            <div class="phase caution reveal">
+                <div class="phase-num">2</div>
+                <div class="phase-tag">Factible con disciplina</div>
+                <h3 class="phase-title">Beta sin custodia de fondos</h3>
+                <div class="phase-meta">Duración: 2–4 meses</div>
+                <ul>
+                    <li>Lectura on-chain (Alchemy / Moralis) para balances reales</li>
+                    <li>Notificaciones reales (Resend + Twilio)</li>
+                    <li>Vault como almacenamiento cifrado de <em>instrucciones</em>, no de claves</li>
+                    <li>El usuario sigue siendo dueño de sus seeds — ATMAN entrega instrucciones cuando se cumple la condición</li>
+                </ul>
+                <div class="phase-outcome">
+                    <strong>Outcome</strong>
+                    Producto monetizable (Premium $99) sin tocar fondos. Evita 80% del riesgo regulatorio y de seguridad. Defendible legalmente.
+                </div>
+            </div>
+            <div class="phase stop reveal">
+                <div class="phase-num">3</div>
+                <div class="phase-tag">No factible solo</div>
+                <h3 class="phase-title">Custodia + smart contracts</h3>
+                <div class="phase-meta">Duración: depende del equipo</div>
+                <ul>
+                    <li>Levantar capital o socio técnico</li>
+                    <li>Auditoría externa antes de mainnet (no negociable)</li>
+                    <li>Smart contracts en Solidity con especialista in-house o consultor</li>
+                    <li>On-call 24/7 + incident response</li>
+                </ul>
+                <div class="phase-outcome">
+                    <strong>Outcome</strong>
+                    Producto del marketing actual: Premium $99 con staking automático y multisig. Solo posible con equipo + auditoría.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="recommendation reveal" id="recomendacion">
+        <div class="rec-card">
+            <span class="rec-label">Recomendación</span>
+            <h2 class="rec-title">Si seguís solo, no pases de Fase 2.</h2>
+            <p class="rec-body">
+                El plan "Premium one-time $99 con staking automático y multisig" del marketing actual <strong>no es un producto que un solo dev deba shipear sin auditoría externa</strong>. La buena noticia: una versión sin custodia (entregar instrucciones cifradas a herederos cuando se cumple la condición) cubre el 80% de la propuesta de valor real, es legalmente más defendible, y es 100% construible con Claude Code en pocos meses.
+                <br><br>
+                Empezá por endurecer lo que ya tenés. Conseguí early users con Fase 2. Si la tracción justifica Fase 3, levantás capital o socio técnico — no antes.
+            </p>
+        </div>
+    </section>
+
+    <section class="section">
+        <span class="section-eyebrow">Referencias</span>
+        <h2 class="section-heading">Archivos críticos y verificación</h2>
+        <p class="section-sub">Para quien quiera reproducir o validar este análisis.</p>
+        <div class="files-grid">
+            <div class="files-col reveal">
+                <h3><span class="dot-gold"></span>Archivos a tener presentes</h3>
+                <ul>
+                    <li><code>index.html</code> — landing, único archivo, i18n inline</li>
+                    <li><code>atman-app/package.json</code> — stack y dependencias</li>
+                    <li><code>atman-app/src/lib/types.ts</code> — modelo de datos del MVP</li>
+                    <li><code>atman-app/src/lib/demo-data.ts</code> — superficie del producto demo</li>
+                    <li><code>atman-app/src/lib/supabase/</code> — capa de persistencia</li>
+                    <li><code>atman-app/src/middleware.ts</code> — protección de rutas</li>
+                    <li><code>_MAT/ATMAN _ Deck.pdf</code> — pitch deck</li>
+                </ul>
+            </div>
+            <div class="files-col reveal">
+                <h3><span class="dot-gold"></span>Cómo verificar las afirmaciones</h3>
+                <ul>
+                    <li>Correr <code>cd atman-app && npm install && npm run dev</code> y validar el flujo demo end-to-end</li>
+                    <li>Revisar <code>package.json</code> para confirmar stack y ausencia de tests</li>
+                    <li><code>git log --oneline</code> confirma 5 commits sobre la landing</li>
+                    <li><code>atman-app/</code> aún no está en git — agregarlo es Fase 1</li>
+                    <li>Pedir a alguien con Ledger + experiencia DeFi que critique el threat model antes de comprometerse a Fase 3</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-logo">ATMAN</div>
+        <div class="footer-tagline">Análisis de factibilidad — uso interno</div>
+        <ul class="footer-links">
+            <li><a href="../index.html">Landing</a></li>
+            <li><a href="https://atman-app.vercel.app/" target="_blank" rel="noopener">Prototipo</a></li>
+            <li><a href="https://github.com/carlinifederico/atman" target="_blank" rel="noopener">Repo</a></li>
+        </ul>
+        <div class="footer-copy">2026-04-26 · Documento de decisión interna · No distribuir como pitch público</div>
+    </footer>
+
+    <script>
+        // Navbar scroll state
+        const navbar = document.getElementById('navbar');
+        const onScroll = () => {
+            if (window.scrollY > 40) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+        // Reveal-on-scroll
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    </script>
+</body>
+</html>
