@@ -247,6 +247,56 @@
         .footer-col a:hover { color: var(--gold); }
         .footer-bottom { padding-top: 28px; border-top: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--text-mute); }
 
+        /* ── Estado en detalle ── */
+        .estado-block { margin-bottom: 56px; }
+        .estado-h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 22px; color: var(--cream); margin-bottom: 10px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .num-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 38px; height: 38px; padding: 0 12px; border-radius: 999px; background: linear-gradient(135deg, var(--gold), #b8860b); color: var(--bg); font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 18px; box-shadow: 0 4px 16px rgba(212,160,23,0.3); }
+        .estado-p { color: var(--text-soft); font-size: 14px; line-height: 1.6; margin-bottom: 24px; max-width: 800px; }
+
+        .routes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .route-card { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; background: var(--glass); border: 1px solid var(--glass-border); border-left: 3px solid var(--teal); border-radius: 10px; transition: border-color 0.2s, transform 0.2s; }
+        .route-card:hover { border-left-color: var(--gold); transform: translateX(2px); }
+        .route-path { font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; font-weight: 600; font-size: 13px; color: var(--gold); letter-spacing: 0.5px; }
+        .route-desc { font-size: 12px; color: var(--text-soft); line-height: 1.4; }
+
+        .stack-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .stack-col { padding: 24px 22px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; transition: border-color 0.25s, transform 0.25s; }
+        .stack-col:hover { border-color: rgba(212,160,23,0.3); transform: translateY(-2px); }
+        .stack-icon { font-size: 24px; line-height: 1; margin-bottom: 12px; }
+        .stack-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 15px; color: var(--cream); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--glass-border); }
+        .stack-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .stack-list li { font-size: 13px; color: var(--text-soft); line-height: 1.4; padding-left: 14px; position: relative; }
+        .stack-list li::before { content: '·'; position: absolute; left: 0; color: var(--gold); font-weight: 800; font-size: 18px; line-height: 14px; }
+
+        .assets-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+        .asset-item { display: flex; align-items: center; gap: 14px; padding: 16px 18px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; }
+        .asset-num { width: 32px; height: 32px; border-radius: 50%; background: var(--teal-soft); color: var(--teal); font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .asset-label { font-size: 13px; color: var(--text-soft); line-height: 1.4; }
+        .asset-label a { color: var(--gold); text-decoration: underline; }
+
+        .phase-detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .phase-detail { padding: 26px 24px; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 18px; display: flex; flex-direction: column; gap: 14px; transition: transform 0.25s, border-color 0.25s; }
+        .phase-detail.done { border-top: 3px solid var(--teal); }
+        .phase-detail.now { border-top: 3px solid var(--gold); background: linear-gradient(180deg, var(--gold-soft), transparent 40%), var(--glass); }
+        .phase-detail.next { border-top: 3px solid var(--purple); }
+        .phase-detail:hover { transform: translateY(-3px); }
+        .phase-detail-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .phase-detail-time { font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 12px; color: var(--text-mute); }
+        .phase-detail-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 17px; color: var(--cream); margin: 0; }
+        .phase-detail-row { padding-top: 12px; border-top: 1px solid var(--glass-border); }
+        .phase-detail-row strong { display: block; font-family: 'Poppins', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+        .phase-detail-row span { font-size: 13px; color: var(--text-soft); line-height: 1.5; }
+
+        .honest-callout { padding: 32px; background: linear-gradient(135deg, rgba(233,69,96,0.06), transparent); border: 1px solid rgba(233,69,96,0.2); border-radius: 18px; }
+        .honest-head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+        .honest-icon { font-size: 26px; line-height: 1; }
+        .honest-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 19px; color: var(--cream); margin: 0; }
+        .honest-sub { font-size: 14px; color: var(--text-soft); line-height: 1.6; margin-bottom: 20px; max-width: 800px; }
+        .honest-sub strong { color: var(--red); font-weight: 700; }
+        .honest-list { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .honest-list li { font-size: 13px; color: var(--text-soft); line-height: 1.5; padding: 12px 16px; background: var(--glass); border-radius: 10px; border-left: 2px solid var(--red); }
+        .honest-list li strong { color: var(--cream); font-family: 'Poppins', sans-serif; font-weight: 600; }
+
         /* ── Sticky mobile CTA ── */
         .mobile-cta { display: none; position: fixed; bottom: 16px; left: 16px; right: 16px; z-index: 90; padding: 14px 22px; background: linear-gradient(135deg, var(--gold), #b8860b); color: var(--bg); border-radius: 999px; font-weight: 700; font-size: 15px; text-align: center; box-shadow: 0 10px 32px rgba(212,160,23,0.5); justify-content: center; align-items: center; gap: 8px; }
 
@@ -272,6 +322,13 @@
             .mobile-cta { display: flex; }
             .footer { padding-bottom: 90px; }
             .contact-section { padding-bottom: 100px; }
+            .routes-grid { grid-template-columns: 1fr 1fr; }
+            .stack-grid { grid-template-columns: 1fr; }
+            .assets-strip { grid-template-columns: 1fr; }
+            .phase-detail-grid { grid-template-columns: 1fr; }
+            .honest-list { grid-template-columns: 1fr; }
+            .estado-h3 { font-size: 19px; }
+            .honest-callout { padding: 22px; }
         }
         @media (max-width: 540px) {
             .steps-row { grid-template-columns: 1fr; }
@@ -279,6 +336,7 @@
             .comp-table th, .comp-table td { padding: 10px 12px; font-size: 13px; }
             .demo-iframe { height: 400px; }
             .demo-url { display: none; }
+            .routes-grid { grid-template-columns: 1fr; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -307,6 +365,7 @@
             <li><a href="#producto" data-i18n="nav_product">Producto</a></li>
             <li><a href="#mercado" data-i18n="nav_market">Mercado</a></li>
             <li><a href="#traccion" data-i18n="nav_traction">Traccion</a></li>
+            <li><a href="#estado" data-i18n="nav_status">Estado</a></li>
             <li><a href="#equipo" data-i18n="nav_team">Equipo</a></li>
         </ul>
         <div class="lang-selector" id="langSelector">
@@ -621,6 +680,182 @@
     </div>
 </section>
 
+<!-- ───────────── ESTADO EN DETALLE ───────────── -->
+<section class="section reveal" id="estado">
+    <span class="section-eyebrow" data-i18n="est_eye">Estado en Detalle</span>
+    <h2 class="section-heading" data-i18n="est_h">Lo que ya esta construido &mdash; sin marketing</h2>
+    <p class="section-sub" data-i18n="est_sub">Inventario tecnico real al 26 de abril de 2026. Numeros y nombres concretos, sin redondear hacia arriba.</p>
+
+    <!-- Routes block -->
+    <div class="estado-block">
+        <h3 class="estado-h3"><span class="num-pill">12</span> <span data-i18n="est_routes_h">rutas funcionales en el prototipo</span></h3>
+        <p class="estado-p" data-i18n="est_routes_p">Next.js + Supabase, ~5.000 LoC en 47 archivos TS/TSX. Auth, dashboard, CRUDs, distribucion porcentual, modo heredero. Cada ruta es navegable hoy en atman-app.vercel.app.</p>
+        <div class="routes-grid">
+            <div class="route-card"><span class="route-path">/login</span><span class="route-desc" data-i18n="rt_login">Auth con validacion Zod</span></div>
+            <div class="route-card"><span class="route-path">/registro</span><span class="route-desc" data-i18n="rt_signup">Signup + auto-creacion de profile</span></div>
+            <div class="route-card"><span class="route-path">/panel</span><span class="route-desc" data-i18n="rt_panel">Dashboard, 4 KPIs, pie chart, activity log</span></div>
+            <div class="route-card"><span class="route-path">/billeteras</span><span class="route-desc" data-i18n="rt_wallets">CRUD wallets, balances, notas cifradas</span></div>
+            <div class="route-card"><span class="route-path">/herederos</span><span class="route-desc" data-i18n="rt_heirs">Gestion herederos &middot; nombre/email/relacion</span></div>
+            <div class="route-card"><span class="route-path">/distribucion</span><span class="route-desc" data-i18n="rt_dist">Asignacion % por heredero (suma=100)</span></div>
+            <div class="route-card"><span class="route-path">/activacion</span><span class="route-desc" data-i18n="rt_activ">Inactividad / multifirma / manual + simulador</span></div>
+            <div class="route-card"><span class="route-path">/vista-heredero</span><span class="route-desc" data-i18n="rt_heir_view">Vista del heredero recibiendo herencia</span></div>
+            <div class="route-card"><span class="route-path">/terminos</span><span class="route-desc" data-i18n="rt_terms">Terminos y condiciones</span></div>
+            <div class="route-card"><span class="route-path">/privacidad</span><span class="route-desc" data-i18n="rt_priv">Politica de privacidad</span></div>
+            <div class="route-card"><span class="route-path">/disclaimer-cripto</span><span class="route-desc" data-i18n="rt_disc">Advertencias regulatorias cripto</span></div>
+            <div class="route-card"><span class="route-path">/</span><span class="route-desc" data-i18n="rt_home">Landing in-app</span></div>
+        </div>
+    </div>
+
+    <!-- Stack block -->
+    <div class="estado-block">
+        <h3 class="estado-h3" data-i18n="est_stack_h">Bajo el capo</h3>
+        <div class="stack-grid">
+            <div class="stack-col">
+                <div class="stack-icon">&#x1F4BB;</div>
+                <div class="stack-title" data-i18n="sk1_t">Stack tecnico</div>
+                <ul class="stack-list">
+                    <li>Next.js 16 &middot; React 19</li>
+                    <li>TypeScript strict</li>
+                    <li>Tailwind CSS 4</li>
+                    <li data-i18n="sk1_l4">12 componentes shadcn/ui</li>
+                    <li data-i18n="sk1_l5">5 vistas con Framer Motion</li>
+                    <li data-i18n="sk1_l6">2 graficos Recharts (pie)</li>
+                </ul>
+            </div>
+            <div class="stack-col">
+                <div class="stack-icon">&#x1F5C4;&#xFE0F;</div>
+                <div class="stack-title" data-i18n="sk2_t">Datos &amp; seguridad</div>
+                <ul class="stack-list">
+                    <li data-i18n="sk2_l1">Supabase &middot; auth + Postgres</li>
+                    <li data-i18n="sk2_l2">6 tablas con migraciones SQL</li>
+                    <li data-i18n="sk2_l3">RLS policies por usuario</li>
+                    <li data-i18n="sk2_l4">Triggers PL/pgSQL en signup</li>
+                    <li data-i18n="sk2_l5">8 puntos de validacion Zod</li>
+                    <li data-i18n="sk2_l6">JSONB para activity log</li>
+                </ul>
+            </div>
+            <div class="stack-col">
+                <div class="stack-icon">&#x2705;</div>
+                <div class="stack-title" data-i18n="sk3_t">Calidad &amp; CI/CD</div>
+                <ul class="stack-list">
+                    <li data-i18n="sk3_l1">7 tests e2e con Playwright</li>
+                    <li data-i18n="sk3_l2">CI corre lint, types, build, e2e</li>
+                    <li data-i18n="sk3_l3">Deploy automatico a Vercel</li>
+                    <li data-i18n="sk3_l4">GitHub Pages para landing/plan</li>
+                    <li data-i18n="sk3_l5">Sin pre-commit hooks aun</li>
+                    <li data-i18n="sk3_l6">Sin tests unitarios aun</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Web assets block -->
+    <div class="estado-block">
+        <h3 class="estado-h3" data-i18n="est_assets_h">Web publica y materiales</h3>
+        <div class="assets-strip">
+            <div class="asset-item">
+                <div class="asset-num">1</div>
+                <div class="asset-label" data-i18n="as1">Landing publico &middot; 13 secciones &middot; 3 idiomas (ES/EN/PT)</div>
+            </div>
+            <div class="asset-item">
+                <div class="asset-num">1</div>
+                <div class="asset-label" data-i18n="as2">Plan de factibilidad publicado &middot; analisis honesto por capa</div>
+            </div>
+            <div class="asset-item">
+                <div class="asset-num">1</div>
+                <div class="asset-label" data-i18n="as3">Site para inversores &middot; este mismo &middot; con demo embebido</div>
+            </div>
+            <div class="asset-item">
+                <div class="asset-num">1</div>
+                <div class="asset-label" data-i18n="as4">Deck PDF &middot; 546 KB &middot; <a href="../_MAT/ATMAN%20_%20Deck.pdf" target="_blank">descargar</a></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phases detail block -->
+    <div class="estado-block">
+        <h3 class="estado-h3" data-i18n="est_phases_h">Las 3 fases &mdash; con tiempos y necesidades</h3>
+        <p class="estado-p" data-i18n="est_phases_p">El plan de factibilidad es publico y honesto. Cada fase tiene un alcance distinto y requiere recursos distintos.</p>
+        <div class="phase-detail-grid">
+            <div class="phase-detail done">
+                <div class="phase-detail-head">
+                    <span class="phase-tag" data-i18n="pd1_tag">Hecho</span>
+                    <span class="phase-detail-time" data-i18n="pd1_time">4&ndash;6 semanas</span>
+                </div>
+                <h4 class="phase-detail-title" data-i18n="pd1_t">Fase 1 &middot; Foundation</h4>
+                <div class="phase-detail-row">
+                    <strong data-i18n="pd_scope">Alcance</strong>
+                    <span data-i18n="pd1_scope">MVP demo investor-ready, sin custodia real de fondos.</span>
+                </div>
+                <div class="phase-detail-row">
+                    <strong data-i18n="pd_deliver">Deliverables</strong>
+                    <span data-i18n="pd1_deliver">12 rutas funcionales, 6 tablas Supabase, brand, landing, plan, deck. Demo en produccion.</span>
+                </div>
+                <div class="phase-detail-row">
+                    <strong data-i18n="pd_need">Recursos</strong>
+                    <span data-i18n="pd1_need">Solo dev + Claude Code. Costo de capital: $0.</span>
+                </div>
+            </div>
+
+            <div class="phase-detail now">
+                <div class="phase-detail-head">
+                    <span class="phase-tag" data-i18n="pd2_tag">Ahora</span>
+                    <span class="phase-detail-time" data-i18n="pd2_time">2&ndash;4 meses</span>
+                </div>
+                <h4 class="phase-detail-title" data-i18n="pd2_t">Fase 2 &middot; Beta + Monetizacion</h4>
+                <div class="phase-detail-row">
+                    <strong data-i18n="pd_scope">Alcance</strong>
+                    <span data-i18n="pd2_scope">Beta cerrada con usuarios reales, plan Premium $99 unico, integracion notarial inicial.</span>
+                </div>
+                <div class="phase-detail-row">
+                    <strong data-i18n="pd_deliver">Deliverables</strong>
+                    <span data-i18n="pd2_deliver">Onboarding pulido, pasarela de pagos, primeros 1.000 usuarios LATAM, partnerships notariales en 2 paises.</span>
+                </div>
+                <div class="phase-detail-row">
+                    <strong data-i18n="pd_need">Recursos</strong>
+                    <span data-i18n="pd2_need">Capital angel para go-to-market, content y partnerships. Aun sin custodia de fondos.</span>
+                </div>
+            </div>
+
+            <div class="phase-detail next">
+                <div class="phase-detail-head">
+                    <span class="phase-tag" data-i18n="pd3_tag">Proximo</span>
+                    <span class="phase-detail-time" data-i18n="pd3_time">12+ meses</span>
+                </div>
+                <h4 class="phase-detail-title" data-i18n="pd3_t">Fase 3 &middot; Custodia real + Escala</h4>
+                <div class="phase-detail-row">
+                    <strong data-i18n="pd_scope">Alcance</strong>
+                    <span data-i18n="pd3_scope">Custodia criptografica real con Shamir Secret Sharing, smart contracts en mainnet, expansion regional.</span>
+                </div>
+                <div class="phase-detail-row">
+                    <strong data-i18n="pd_deliver">Deliverables</strong>
+                    <span data-i18n="pd3_deliver">Smart contracts auditados, staking pasivo, integracion con exchanges/wallets (B2B), compliance multipais.</span>
+                </div>
+                <div class="phase-detail-row">
+                    <strong data-i18n="pd_need">Recursos</strong>
+                    <span data-i18n="pd3_need">Equipo (smart contract dev, security lead, legal). Auditoria externa USD $30k&ndash;150k. Seed/Series A.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Honest constraints block -->
+    <div class="honest-callout">
+        <div class="honest-head">
+            <span class="honest-icon">&#x26A0;&#xFE0F;</span>
+            <h3 class="honest-title" data-i18n="hon_h">Lo honesto: lo que no podemos hacer solos</h3>
+        </div>
+        <p class="honest-sub" data-i18n="hon_sub">El plan de factibilidad lo dice claro: hay piezas donde un solo dev + Claude Code <strong>no</strong> es suficiente. Por eso esta conversacion existe.</p>
+        <ul class="honest-list">
+            <li><strong data-i18n="hon1_t">Custodia criptografica real</strong> &middot; <span data-i18n="hon1_d">Shamir Secret Sharing en produccion no se hace solo &mdash; requiere security lead.</span></li>
+            <li><strong data-i18n="hon2_t">Smart contracts custom</strong> &middot; <span data-i18n="hon2_d">Escribir contratos de herencia sin specialist es jugar con dinero ajeno.</span></li>
+            <li><strong data-i18n="hon3_t">Auditoria externa</strong> &middot; <span data-i18n="hon3_d">Trail of Bits, OpenZeppelin o equivalente: USD $30k&ndash;150k antes de mainnet.</span></li>
+            <li><strong data-i18n="hon4_t">Compliance LATAM</strong> &middot; <span data-i18n="hon4_d">Argentina, Brasil, Mexico: cada pais con su normativa cripto y sucesoria.</span></li>
+            <li><strong data-i18n="hon5_t">On-call 24/7</strong> &middot; <span data-i18n="hon5_d">Un solo dev no puede ser PagerDuty cuando custodias dinero ajeno.</span></li>
+        </ul>
+    </div>
+</section>
+
 <!-- ───────────── EQUIPO ───────────── -->
 <section class="section reveal" id="equipo">
     <span class="section-eyebrow" data-i18n="team_eye">El Equipo</span>
@@ -732,7 +967,7 @@
 // ═══════════════════════════════════════
 const T = {
     es: {
-        nav_badge: "Inversores", nav_problem: "Problema", nav_product: "Producto", nav_market: "Mercado", nav_traction: "Traccion", nav_team: "Equipo", nav_cta: "Hablemos",
+        nav_badge: "Inversores", nav_problem: "Problema", nav_product: "Producto", nav_market: "Mercado", nav_traction: "Traccion", nav_status: "Estado", nav_team: "Equipo", nav_cta: "Hablemos",
         hero_tag: "Pre-seed · LATAM · 2026",
         hero_title: "$200B perdidos para siempre.<br>Estamos construyendo la boveda que los rescata.",
         hero_sub: "ATMAN es la primera app de herencia digital cripto pensada para humanos, no para criptoexpertos. Multichain, smart contracts, herederos sin friccion.",
@@ -795,6 +1030,48 @@ const T = {
         rp3_tag: "Proximo", rp3_t: "Fase 3 · Escala", rp3_d: "Enterprise (exchanges/wallets), staking pasivo, expansion regional.",
         status_l: "Status actual:", status_v: "validando producto y mensaje con angeles LATAM · Q2 2026.",
 
+        est_eye: "Estado en Detalle", est_h: "Lo que ya esta construido — sin marketing",
+        est_sub: "Inventario tecnico real al 26 de abril de 2026. Numeros y nombres concretos, sin redondear hacia arriba.",
+        est_routes_h: "rutas funcionales en el prototipo",
+        est_routes_p: "Next.js + Supabase, ~5.000 LoC en 47 archivos TS/TSX. Auth, dashboard, CRUDs, distribucion porcentual, modo heredero. Cada ruta es navegable hoy en atman-app.vercel.app.",
+        rt_login: "Auth con validacion Zod", rt_signup: "Signup + auto-creacion de profile",
+        rt_panel: "Dashboard, 4 KPIs, pie chart, activity log", rt_wallets: "CRUD wallets, balances, notas cifradas",
+        rt_heirs: "Gestion herederos · nombre/email/relacion", rt_dist: "Asignacion % por heredero (suma=100)",
+        rt_activ: "Inactividad / multifirma / manual + simulador", rt_heir_view: "Vista del heredero recibiendo herencia",
+        rt_terms: "Terminos y condiciones", rt_priv: "Politica de privacidad",
+        rt_disc: "Advertencias regulatorias cripto", rt_home: "Landing in-app",
+        est_stack_h: "Bajo el capo",
+        sk1_t: "Stack tecnico", sk1_l4: "12 componentes shadcn/ui", sk1_l5: "5 vistas con Framer Motion", sk1_l6: "2 graficos Recharts (pie)",
+        sk2_t: "Datos & seguridad", sk2_l1: "Supabase · auth + Postgres", sk2_l2: "6 tablas con migraciones SQL", sk2_l3: "RLS policies por usuario", sk2_l4: "Triggers PL/pgSQL en signup", sk2_l5: "8 puntos de validacion Zod", sk2_l6: "JSONB para activity log",
+        sk3_t: "Calidad & CI/CD", sk3_l1: "7 tests e2e con Playwright", sk3_l2: "CI corre lint, types, build, e2e", sk3_l3: "Deploy automatico a Vercel", sk3_l4: "GitHub Pages para landing/plan", sk3_l5: "Sin pre-commit hooks aun", sk3_l6: "Sin tests unitarios aun",
+        est_assets_h: "Web publica y materiales",
+        as1: "Landing publico · 13 secciones · 3 idiomas (ES/EN/PT)",
+        as2: "Plan de factibilidad publicado · analisis honesto por capa",
+        as3: "Site para inversores · este mismo · con demo embebido",
+        as4: 'Deck PDF · 546 KB · <a href="../_MAT/ATMAN%20_%20Deck.pdf" target="_blank">descargar</a>',
+        est_phases_h: "Las 3 fases — con tiempos y necesidades",
+        est_phases_p: "El plan de factibilidad es publico y honesto. Cada fase tiene un alcance distinto y requiere recursos distintos.",
+        pd_scope: "Alcance", pd_deliver: "Deliverables", pd_need: "Recursos",
+        pd1_tag: "Hecho", pd1_time: "4–6 semanas", pd1_t: "Fase 1 · Foundation",
+        pd1_scope: "MVP demo investor-ready, sin custodia real de fondos.",
+        pd1_deliver: "12 rutas funcionales, 6 tablas Supabase, brand, landing, plan, deck. Demo en produccion.",
+        pd1_need: "Solo dev + Claude Code. Costo de capital: $0.",
+        pd2_tag: "Ahora", pd2_time: "2–4 meses", pd2_t: "Fase 2 · Beta + Monetizacion",
+        pd2_scope: "Beta cerrada con usuarios reales, plan Premium $99 unico, integracion notarial inicial.",
+        pd2_deliver: "Onboarding pulido, pasarela de pagos, primeros 1.000 usuarios LATAM, partnerships notariales en 2 paises.",
+        pd2_need: "Capital angel para go-to-market, content y partnerships. Aun sin custodia de fondos.",
+        pd3_tag: "Proximo", pd3_time: "12+ meses", pd3_t: "Fase 3 · Custodia real + Escala",
+        pd3_scope: "Custodia criptografica real con Shamir Secret Sharing, smart contracts en mainnet, expansion regional.",
+        pd3_deliver: "Smart contracts auditados, staking pasivo, integracion con exchanges/wallets (B2B), compliance multipais.",
+        pd3_need: "Equipo (smart contract dev, security lead, legal). Auditoria externa USD $30k–150k. Seed/Series A.",
+        hon_h: "Lo honesto: lo que no podemos hacer solos",
+        hon_sub: "El plan de factibilidad lo dice claro: hay piezas donde un solo dev + Claude Code <strong>no</strong> es suficiente. Por eso esta conversacion existe.",
+        hon1_t: "Custodia criptografica real", hon1_d: "Shamir Secret Sharing en produccion no se hace solo — requiere security lead.",
+        hon2_t: "Smart contracts custom", hon2_d: "Escribir contratos de herencia sin specialist es jugar con dinero ajeno.",
+        hon3_t: "Auditoria externa", hon3_d: "Trail of Bits, OpenZeppelin o equivalente: USD $30k–150k antes de mainnet.",
+        hon4_t: "Compliance LATAM", hon4_d: "Argentina, Brasil, Mexico: cada pais con su normativa cripto y sucesoria.",
+        hon5_t: "On-call 24/7", hon5_d: "Un solo dev no puede ser PagerDuty cuando custodias dinero ajeno.",
+
         team_eye: "El Equipo", team_h: "Founder con velocidad de ejecucion",
         team_role: "Founder · Producto · Tecnologia",
         team_bio: "Construyo ATMAN end-to-end: MVP en produccion, branding, sitio publico, plan de factibilidad y deck en semanas, no meses. Background en producto y tecnologia con foco en proyectos de impacto LATAM.",
@@ -816,7 +1093,7 @@ const T = {
         mobile_cta: "Hablemos"
     },
     en: {
-        nav_badge: "Investors", nav_problem: "Problem", nav_product: "Product", nav_market: "Market", nav_traction: "Traction", nav_team: "Team", nav_cta: "Let's talk",
+        nav_badge: "Investors", nav_problem: "Problem", nav_product: "Product", nav_market: "Market", nav_traction: "Traction", nav_status: "Status", nav_team: "Team", nav_cta: "Let's talk",
         hero_tag: "Pre-seed · LATAM · 2026",
         hero_title: "$200B lost forever.<br>We're building the vault that rescues them.",
         hero_sub: "ATMAN is the first crypto digital inheritance app designed for humans, not crypto experts. Multichain, smart contracts, frictionless heirs.",
@@ -878,6 +1155,48 @@ const T = {
         rp2_tag: "Now", rp2_t: "Phase 2 · Monetization", rp2_d: "Premium $99 one-time, notarial integration, first 1,000 LATAM users.",
         rp3_tag: "Next", rp3_t: "Phase 3 · Scale", rp3_d: "Enterprise (exchanges/wallets), passive staking, regional expansion.",
         status_l: "Current status:", status_v: "validating product and message with LATAM angels · Q2 2026.",
+
+        est_eye: "Status in Detail", est_h: "What's actually built — no marketing",
+        est_sub: "Real technical inventory as of April 26, 2026. Concrete numbers and names, no rounding up.",
+        est_routes_h: "functional routes in the prototype",
+        est_routes_p: "Next.js + Supabase, ~5,000 LoC across 47 TS/TSX files. Auth, dashboard, CRUDs, percentage distribution, heir mode. Every route is navigable today at atman-app.vercel.app.",
+        rt_login: "Auth with Zod validation", rt_signup: "Signup + auto-create profile",
+        rt_panel: "Dashboard, 4 KPIs, pie chart, activity log", rt_wallets: "CRUD wallets, balances, encrypted notes",
+        rt_heirs: "Heir management · name/email/relationship", rt_dist: "% assignment per heir (sum=100)",
+        rt_activ: "Inactivity / multisig / manual + simulator", rt_heir_view: "Heir view receiving inheritance",
+        rt_terms: "Terms and conditions", rt_priv: "Privacy policy",
+        rt_disc: "Crypto regulatory disclaimers", rt_home: "In-app landing",
+        est_stack_h: "Under the hood",
+        sk1_t: "Tech stack", sk1_l4: "12 shadcn/ui components", sk1_l5: "5 views with Framer Motion", sk1_l6: "2 Recharts (pie) graphs",
+        sk2_t: "Data & security", sk2_l1: "Supabase · auth + Postgres", sk2_l2: "6 tables with SQL migrations", sk2_l3: "RLS policies per user", sk2_l4: "PL/pgSQL triggers on signup", sk2_l5: "8 Zod validation points", sk2_l6: "JSONB for activity log",
+        sk3_t: "Quality & CI/CD", sk3_l1: "7 e2e tests with Playwright", sk3_l2: "CI runs lint, types, build, e2e", sk3_l3: "Auto-deploy to Vercel", sk3_l4: "GitHub Pages for landing/plan", sk3_l5: "No pre-commit hooks yet", sk3_l6: "No unit tests yet",
+        est_assets_h: "Public web and materials",
+        as1: "Public landing · 13 sections · 3 languages (ES/EN/PT)",
+        as2: "Feasibility plan published · honest layer-by-layer analysis",
+        as3: "Investor site · this one · with embedded demo",
+        as4: 'Deck PDF · 546 KB · <a href="../_MAT/ATMAN%20_%20Deck.pdf" target="_blank">download</a>',
+        est_phases_h: "The 3 phases — with timelines and needs",
+        est_phases_p: "The feasibility plan is public and honest. Each phase has different scope and requires different resources.",
+        pd_scope: "Scope", pd_deliver: "Deliverables", pd_need: "Resources",
+        pd1_tag: "Done", pd1_time: "4–6 weeks", pd1_t: "Phase 1 · Foundation",
+        pd1_scope: "Investor-ready MVP demo, no real custody of funds.",
+        pd1_deliver: "12 functional routes, 6 Supabase tables, brand, landing, plan, deck. Demo in production.",
+        pd1_need: "Solo dev + Claude Code. Capital cost: $0.",
+        pd2_tag: "Now", pd2_time: "2–4 months", pd2_t: "Phase 2 · Beta + Monetization",
+        pd2_scope: "Closed beta with real users, $99 one-time Premium plan, initial notarial integration.",
+        pd2_deliver: "Polished onboarding, payment gateway, first 1,000 LATAM users, notarial partnerships in 2 countries.",
+        pd2_need: "Angel capital for go-to-market, content and partnerships. Still no fund custody.",
+        pd3_tag: "Next", pd3_time: "12+ months", pd3_t: "Phase 3 · Real custody + Scale",
+        pd3_scope: "Real cryptographic custody with Shamir Secret Sharing, mainnet smart contracts, regional expansion.",
+        pd3_deliver: "Audited smart contracts, passive staking, exchange/wallet integration (B2B), multi-country compliance.",
+        pd3_need: "Team (smart contract dev, security lead, legal). External audit USD $30k–150k. Seed/Series A.",
+        hon_h: "The honest truth: what we can't do alone",
+        hon_sub: "The feasibility plan says it clearly: there are pieces where a solo dev + Claude Code is <strong>not</strong> enough. That's why this conversation exists.",
+        hon1_t: "Real cryptographic custody", hon1_d: "Shamir Secret Sharing in production isn't done solo — needs a security lead.",
+        hon2_t: "Custom smart contracts", hon2_d: "Writing inheritance contracts without a specialist is gambling with other people's money.",
+        hon3_t: "External audit", hon3_d: "Trail of Bits, OpenZeppelin or equivalent: USD $30k–150k before mainnet.",
+        hon4_t: "LATAM compliance", hon4_d: "Argentina, Brazil, Mexico: each country with its own crypto and inheritance law.",
+        hon5_t: "24/7 on-call", hon5_d: "A solo dev can't be PagerDuty when custodying other people's money.",
 
         team_eye: "The Team", team_h: "Founder with execution speed",
         team_role: "Founder · Product · Technology",
